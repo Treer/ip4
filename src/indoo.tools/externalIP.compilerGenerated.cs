@@ -3,7 +3,7 @@
     using System.Runtime.CompilerServices;
     using System.Diagnostics;
 
-    // I've moved the compiler generated subclasses of externalIP into this file
+    // Contains the compiler generated subclasses from externalIP
     public partial class externalIP {
         
         [CompilerGenerated]

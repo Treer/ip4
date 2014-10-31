@@ -14,9 +14,9 @@ namespace indoo.tools
     using System.Threading;
 
     /// <summary>
-    /// This is the main class of outerIP.exe, and provides ip4 with external ip functionality.
+    /// externalIP is the main class of outerIP.exe, and is providing ip4 with external ip functionality.
     /// 
-    /// Originally the code was decompiled from outerIP.exe, Copyright © 2013 primoz@licen.net
+    /// Originally the code was decompiled from outerIP.exe, written by primoz@licen.net
     /// outerIP can be obtained from http://primocode.blogspot.com.au/2013/12/i-spent-couple-of-hours-searching-for.html
     ///
     /// This version has been heavily modified and cut down for use
@@ -281,6 +281,8 @@ namespace indoo.tools
 		public string txt_ini;
 		public string txt_timeoutVerbose;
 		public string txt_timeout;
+
+
 		public externalIP.modes mode
 		{
 			get
