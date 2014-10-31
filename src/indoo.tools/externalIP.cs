@@ -1,18 +1,30 @@
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 namespace indoo.tools
 {
-	public class externalIP
+    using Microsoft.VisualBasic;
+    using Microsoft.VisualBasic.CompilerServices;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Net;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using System.Threading;
+
+    /// <summary>
+    /// This is the main class of outerIP.exe, and provides ip4 with external ip functionality.
+    /// 
+    /// Originally the code was decompiled from outerIP.exe, Copyright © 2013 primoz@licen.net
+    /// outerIP can be obtained from http://primocode.blogspot.com.au/2013/12/i-spent-couple-of-hours-searching-for.html
+    ///
+    /// This version has been heavily modified and cut down for use
+    /// use as part of ip4, with permission from primoz@licen.net.
+    /// 
+    /// This version is released under the MIT Licence (see LICENCE file)
+    /// </summary>
+	public partial class externalIP
 	{
 		public enum modes
 		{
@@ -27,6 +39,7 @@ namespace indoo.tools
 			saveToUrlList,
 			showUrlList
 		}
+
 		private struct order
 		{
 			public string urlLine;
@@ -39,6 +52,7 @@ namespace indoo.tools
 			public double avgTime;
 			public string ipAddress;
 		}
+
 		private class getPage2Thread
 		{
 			public string url;
@@ -89,6 +103,7 @@ namespace indoo.tools
 				return text;
 			}
 		}
+
 		private class getPage3Thread
 		{
 			public string url;
@@ -149,6 +164,7 @@ namespace indoo.tools
 				return text2;
 			}
 		}
+
 		private class myWebClient : WebClient
 		{
 			private int _TimeoutMS;
@@ -187,34 +203,6 @@ namespace indoo.tools
 					this.w.Timeout = this._TimeoutMS;
 				}
 				return this.w;
-			}
-		}
-		[CompilerGenerated]
-		private class _ClosureX__1
-		{
-			public externalIP.getPage2Thread XVBXLocal_VBXt_refXS6;
-			[DebuggerNonUserCode]
-			public _ClosureX__1()
-			{
-			}
-			[DebuggerStepThrough, CompilerGenerated]
-			public void _LambdaX__2()
-			{
-				this.XVBXLocal_VBXt_refXS6.getPage();
-			}
-		}
-		[CompilerGenerated]
-		private class _ClosureX__2
-		{
-			public externalIP.getPage3Thread XVBXLocal_VBXt_refXS7;
-			[DebuggerNonUserCode]
-			public _ClosureX__2()
-			{
-			}
-			[DebuggerStepThrough, CompilerGenerated]
-			public void _LambdaX__3()
-			{
-				this.XVBXLocal_VBXt_refXS7.getPage();
 			}
 		}
 		private List<string> urls;
@@ -2144,15 +2132,10 @@ namespace indoo.tools
 			}
 			return DateAndTime.Now.ToString("?yyMMddHHmmssfffffff");
 		}
-		public externalIP()
-		{
-			this.writeToOrderOnly = false;
-			this.setDefaultValues();
-		}
-		[CompilerGenerated]
-		private static int _LambdaX__1(externalIP.order x, externalIP.order y)
-		{
-			return x.avgTime.CompareTo(y.avgTime);
-		}
+
+        public externalIP() {
+            this.writeToOrderOnly = false;
+            this.setDefaultValues();
+        }
 	}
 }
