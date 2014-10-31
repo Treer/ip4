@@ -190,31 +190,31 @@ namespace indoo.tools
 			}
 		}
 		[CompilerGenerated]
-		internal class _Closure$__1
+		private class _ClosureX__1
 		{
-			public externalIP.getPage2Thread $VB$Local_VB$t_ref$S6;
+			public externalIP.getPage2Thread XVBXLocal_VBXt_refXS6;
 			[DebuggerNonUserCode]
-			public _Closure$__1()
+			public _ClosureX__1()
 			{
 			}
 			[DebuggerStepThrough, CompilerGenerated]
-			public void _Lambda$__2()
+			public void _LambdaX__2()
 			{
-				this.$VB$Local_VB$t_ref$S6.getPage();
+				this.XVBXLocal_VBXt_refXS6.getPage();
 			}
 		}
 		[CompilerGenerated]
-		internal class _Closure$__2
+		private class _ClosureX__2
 		{
-			public externalIP.getPage3Thread $VB$Local_VB$t_ref$S7;
+			public externalIP.getPage3Thread XVBXLocal_VBXt_refXS7;
 			[DebuggerNonUserCode]
-			public _Closure$__2()
+			public _ClosureX__2()
 			{
 			}
 			[DebuggerStepThrough, CompilerGenerated]
-			public void _Lambda$__3()
+			public void _LambdaX__3()
 			{
-				this.$VB$Local_VB$t_ref$S7.getPage();
+				this.XVBXLocal_VBXt_refXS7.getPage();
 			}
 		}
 		private List<string> urls;
@@ -1041,7 +1041,7 @@ namespace indoo.tools
 				{
 					string text3 = this.cString(text2, false);
 					Regex regex;
-					string result;
+					string result = null;
 					try
 					{
 						regex = new Regex(this.paramRegex);
@@ -1712,7 +1712,12 @@ namespace indoo.tools
 				return line;
 			}
 		}
-		private string cString(object textIn, bool isNewInstance = false)
+
+		private string cString(object textIn) {
+            return cString(textIn, false);
+        }
+
+		private string cString(object textIn, bool isNewInstance)
 		{
 			if (this.isEmpty(RuntimeHelpers.GetObjectValue(textIn)))
 			{
@@ -1981,9 +1986,9 @@ namespace indoo.tools
 			{
 				DateTime now = DateTime.Now;
 				this.timeStart = DateTime.Now;
-				externalIP.getPage2Thread getPage2Thread;
+				externalIP.getPage2Thread getPage2Thread = null;
 				Thread thread;
-				externalIP.getPage3Thread getPage3Thread;
+				externalIP.getPage3Thread getPage3Thread = null;
 				if (!this.isPOSTMethod)
 				{
 					getPage2Thread = new externalIP.getPage2Thread();
@@ -1991,10 +1996,10 @@ namespace indoo.tools
 					getPage2Thread.timeOut = this.timeOut;
 					getPage2Thread.url = url;
 					getPage2Thread.urlUniqueAdd = this.urlUniqueAdd();
-					externalIP.getPage2Thread VB$t_ref$S6 = getPage2Thread;
-					thread = new Thread(delegate
+					externalIP.getPage2Thread VBXt_refXS6 = getPage2Thread;
+					thread = new Thread((ThreadStart)delegate
 					{
-						VB$t_ref$S6.getPage();
+						VBXt_refXS6.getPage();
 					});
 				}
 				else
@@ -2004,10 +2009,10 @@ namespace indoo.tools
 					getPage3Thread.timeOut = this.timeOut;
 					getPage3Thread.url = url;
 					getPage3Thread.urlUniqueAdd = this.urlUniqueAdd();
-					externalIP.getPage3Thread VB$t_ref$S7 = getPage3Thread;
-					thread = new Thread(delegate
+					externalIP.getPage3Thread VBXt_refXS7 = getPage3Thread;
+                    thread = new Thread((ThreadStart)delegate
 					{
-						VB$t_ref$S7.getPage();
+						VBXt_refXS7.getPage();
 					});
 				}
 				thread.Start();
@@ -2047,7 +2052,7 @@ namespace indoo.tools
 		}
 		private string getPage5(string url)
 		{
-			string result;
+			string result = null;
 			return result;
 		}
 		private string getPage4(string url)
@@ -2145,7 +2150,7 @@ namespace indoo.tools
 			this.setDefaultValues();
 		}
 		[CompilerGenerated]
-		private static int _Lambda$__1(externalIP.order x, externalIP.order y)
+		private static int _LambdaX__1(externalIP.order x, externalIP.order y)
 		{
 			return x.avgTime.CompareTo(y.avgTime);
 		}
