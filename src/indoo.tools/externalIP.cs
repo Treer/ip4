@@ -26,18 +26,109 @@ namespace indoo.tools
     /// </summary>
 	public partial class externalIP
 	{
+        private List<string> urls;
+        private List<string> ips;
+        private List<string> regExs;
+        public string iPList;
+        public string exeFile;
+        private string paramIPs;
+        private string paramFile;
+        private string paramLastIP;
+        private string missingParams;
+        /// <summary>
+        /// const "http"
+        /// </summary>
+        private string httpStart;
+        /// <summary>
+        /// const "http://"
+        /// </summary>
+        private string httpStart2;
+        private string regexGroupname;
+        public string myIniFile;
+        private bool isPublic;
+        public bool isIpFromTwoSources;
+        private bool exitApp;
+        private bool isForceNewIps;
+        private bool isUrlSave;
+        public bool isQuiet;
+        private bool isWait;
+        public int timeOut;
+        public string paramUrl;
+        public string paramRegex;
+        public bool isVerbose;
+        private DateTime timeStart;
+        private DateTime timeStop;
+        /// <summary>
+        /// Defaults to -1. Is the Value from arg -p:<positionIndex>  
+        /// acquire IP using url at specific position (for random page use 0)
+        /// </summary>
+        private int positionIndex;
+        public int repeatNumber;
+        public int repeatPause;
+        public bool isAllURLs;
+        private externalIP.modes _mode;
+        private bool isWarnWritten;
+        public string urlResult;
+        public string urlResult2;
+        private string lastIp;
+        private bool isCachePreventAborted;
+        private int x;
+        private int y;
+        private bool isTimeOut;
+        private string timeoutUrl;
+        private bool addNewLine;
+        private bool writeToOrderOnly;
+        private List<externalIP.order> urlOrder;
+        public bool isPOSTMethod;
+        public bool isWritenToConsole;
+        public string output;
+        public string[] arguments;
+        public string txtP;
+        public string txtC;
+        public string txt_result;
+        public string txt_resultVerbose;
+        public string txt_copyr;
+        public string txt_errDesc;
+        public string txt_time1;
+        public string txt_invalid1;
+        public string txt_ipBracket;
+        public string txt_dlFail;
+        public string txt_err1;
+        public string txt_err2;
+        public string txt_err3;
+        public string txt_err4;
+        public string txt_err5;
+        public string txt_err6;
+        public string txt_err7;
+        public string txt_err8;
+        public string txt_err9;
+        public string txt_err10;
+        public string txt_infoRegex;
+        public string txt_info1;
+        public string txt_info2;
+        public string txt_helpExtended;
+        public string txt_help;
+        public string txt_site;
+        public string txt_ini;
+        public string txt_timeoutVerbose;
+        public string txt_timeout;
+
+
+
 		public enum modes
 		{
 			returnExternalIP,
-			runExeWhenExternalIPmatch,
 			createIniFile,
-			showHelpExtended,
 			addIPsToIni,
-			showHelp,
 			orderURLs,
-			runExeWhenExternalIpChange,
 			saveToUrlList,
-			showUrlList
+			showUrlList,
+
+            // Modes not needed for ip4
+			runExeWhenExternalIPmatch,
+			runExeWhenExternalIpChange,
+			showHelpExtended,
+			showHelp
 		}
 
 		private struct order
@@ -205,82 +296,6 @@ namespace indoo.tools
 				return this.w;
 			}
 		}
-		private List<string> urls;
-		private List<string> ips;
-		private List<string> regExs;
-		public string iPList;
-		public string exeFile;
-		private string paramIPs;
-		private string paramFile;
-		private string paramLastIP;
-		private string missingParams;
-		private string httpStart;
-		private string httpStart2;
-		private string regexGroupname;
-		public string myIniFile;
-		private bool isPublic;
-		public bool isIpFromTwoSources;
-		private bool exitApp;
-		private bool isForceNewIps;
-		private bool isUrlSave;
-		public bool isQuiet;
-		private bool isWait;
-		public int timeOut;
-		public string paramUrl;
-		public string paramRegex;
-		public bool isVerbose;
-		private DateTime timeStart;
-		private DateTime timeStop;
-		private int positionIndex;
-		public int repeatNumber;
-		public int repeatPause;
-		public bool isAllURLs;
-		private externalIP.modes _mode;
-		private bool isWarnWritten;
-		public string urlResult;
-		public string urlResult2;
-		private string lastIp;
-		private bool isCachePreventAborted;
-		private int x;
-		private int y;
-		private bool isTimeOut;
-		private string timeoutUrl;
-		private bool addNewLine;
-		private bool writeToOrderOnly;
-		private List<externalIP.order> urlOrder;
-		public bool isPOSTMethod;
-		public bool isWritenToConsole;
-		public string output;
-		public string[] arguments;
-		public string txtP;
-		public string txtC;
-		public string txt_result;
-		public string txt_resultVerbose;
-		public string txt_copyr;
-		public string txt_errDesc;
-		public string txt_time1;
-		public string txt_invalid1;
-		public string txt_ipBracket;
-		public string txt_dlFail;
-		public string txt_err1;
-		public string txt_err2;
-		public string txt_err3;
-		public string txt_err4;
-		public string txt_err5;
-		public string txt_err6;
-		public string txt_err7;
-		public string txt_err8;
-		public string txt_err9;
-		public string txt_err10;
-		public string txt_infoRegex;
-		public string txt_info1;
-		public string txt_info2;
-		public string txt_helpExtended;
-		public string txt_help;
-		public string txt_site;
-		public string txt_ini;
-		public string txt_timeoutVerbose;
-		public string txt_timeout;
 
 
 		public externalIP.modes mode
@@ -311,7 +326,9 @@ namespace indoo.tools
 			this.txt_resultVerbose = "External IP={0}, time={1}ms, url={2}";
 			this.txt_timeoutVerbose = "Timeout, time>{0}ms, url={1}";
 			this.txt_timeout = "Timeout > {0}ms.";
-			this.txt_copyr = "{p}OuterIP v{0} - Acquires external IP from public web pages.{p}Copyright (c) 2013 primoz@licen.net{p}";
+            if (String.IsNullOrEmpty(this.txt_copyr)) {
+                this.txt_copyr = "{p}OuterIP v{0} - Acquires external IP from public web pages.{p}Copyright (c) 2013 primoz@licen.net{p}";
+            }
 			this.txt_errDesc = "Current IP address missing. ;Exe file path is invalid or missing. ;There is no valid provided url(s) and/or extraction regular expression.{p}If you delete current ini file then valid example with urls will be {p}automatically written into ini file.";
 			this.txt_err1 = "Program also cannot write to:{p}{0}{p}Enable writing to this location and/or set correct permissions. {p}";
 			this.txt_err2 = "";
@@ -484,6 +501,9 @@ namespace indoo.tools
 			this.txt_help += "less than minute. Command creates ini file with proper order of URLs. See ini {p}";
 			this.txt_help += "file contents for details and examples.{p}";
 		}
+        /// <summary>
+        /// Updates the copyright string (this.txt_copyr) to contain the assembly version number
+        /// </summary>
 		private void setTextVars()
 		{
 			string text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -493,11 +513,10 @@ namespace indoo.tools
 		public void setArguments(string[] args)
 		{
 			bool flag = false;
-			int arg_0A_0 = 0;
 			checked
 			{
 				int num = args.Length - 1;
-				for (int i = arg_0A_0; i <= num; i++)
+				for (int i = 0; i <= num; i++)
 				{
 					string text = Strings.Trim(this.cString(args[i], false));
 					if (text.StartsWith("-i:", StringComparison.InvariantCultureIgnoreCase) & Strings.Len(text) > 3)
@@ -1228,9 +1247,9 @@ namespace indoo.tools
 					text = this.readFileText(this.myIniFile);
 				}
 			}
-			catch (Exception expr_22)
+			catch (Exception ex)
 			{
-				ProjectData.SetProjectError(expr_22);
+				ProjectData.SetProjectError(ex);
 				ProjectData.ClearProjectError();
 			}
 			if (this.isEmpty(text))
@@ -1846,30 +1865,116 @@ namespace indoo.tools
 			}
 			return false;
 		}
+        
+        public void processIP_async(bool skipIP, bool saveSkipIP, string[] args) {
+
+            this.initValues();
+            this.setArguments(args);
+            this.setVariables();
+            this.fillIniFileParameters(args);
+
+			List<string> list = new List<string>();
+			int firstUrl_index = 0;
+            int lastUrl_index = this.urls.Count - 1;
+
+			if (this.positionIndex > 0) {
+			    // only use one url
+				firstUrl_index = this.positionIndex - 1;
+				lastUrl_index = firstUrl_index;
+
+			} else if (this.positionIndex == 0) {
+			    // use a single random url
+				Random random = new Random();
+				firstUrl_index = random.Next(this.urls.Count - 1);
+				lastUrl_index = firstUrl_index;
+            }
+
+			for (int i = firstUrl_index; i <= lastUrl_index; i++)
+			{
+				this.timeStart = DateTime.Now;
+				try	{
+					string text = "";
+					if (!this.isEmpty(this.ips[i]))	{
+
+                        string url = this.httpStart2 + this.ips[i];
+                        Regex regex = new Regex(this.regExs[i]);
+
+                        getPage_ip4(url, regex);
+                        /*
+						string input = this.cString(this.getPage(url), false);
+
+						Regex regex = new Regex(this.regExs[i]);
+						Match match = regex.Match(input);
+						if (match.Success) {
+							text = Strings.Trim(this.cString(match.Groups[this.regexGroupname].Value, false));
+
+							if (this.setResultIp(ref text, ref list, ref this.isIpFromTwoSources, url) && !this.isAllURLs)
+							{
+								this.checkLastIp(text);
+								string result = text;
+								return result;
+							}
+						}*/
+					}
+					if (this.isEmpty(text))
+					{
+						string url = this.urls[i];
+						string input2 = this.cString(this.getPage(url), false);
+						Regex regex2 = new Regex(this.regExs[i]);
+						Match match2 = regex2.Match(input2);
+						if (match2.Success)
+						{
+							text = Strings.Trim(this.cString(match2.Groups[this.regexGroupname].Value, false));
+							if (this.setResultIp(ref text, ref list, ref this.isIpFromTwoSources, url) && !this.isAllURLs)
+							{
+								this.checkLastIp(text);
+								string result = text;
+								//return result;
+							}
+						}
+					}
+                    /*
+					if (this.isAllURLs)
+					{
+						this.urlResult = url;
+						this.x++;
+						this.consoleWrite(Conversions.ToString(this.x) + ". ");
+						this.checkLastIp(text);
+						this.writeIpAddress(text);
+					}*/
+				}
+				catch (Exception expr_221)
+				{
+					ProjectData.SetProjectError(expr_221);
+					ProjectData.ClearProjectError();
+				}
+			}
+			//return "";
+		}
+
+
 		public string processIP()
 		{
 			List<string> list = new List<string>();
-			int num = 0;
+			int firstUrl_index = 0;
 			checked
 			{
-				int num2 = this.urls.Count - 1;
+				int lastUrl_index = this.urls.Count - 1;
 				if (this.positionIndex > 0)
 				{
-					num = this.positionIndex - 1;
-					num2 = num;
+					firstUrl_index = this.positionIndex - 1;
+					lastUrl_index = firstUrl_index;
 				}
 				else
 				{
 					if (this.positionIndex == 0)
 					{
 						Random random = new Random();
-						num = random.Next(this.urls.Count - 1);
-						num2 = num;
+						firstUrl_index = random.Next(this.urls.Count - 1);
+						lastUrl_index = firstUrl_index;
 					}
 				}
-				int arg_57_0 = num;
-				int num3 = num2;
-				for (int i = arg_57_0; i <= num3; i++)
+				for (int i = firstUrl_index; i <= lastUrl_index; i++)
 				{
 					this.timeStart = DateTime.Now;
 					try
@@ -1969,6 +2074,90 @@ namespace indoo.tools
 			}
 			return false;
 		}
+
+        void LookupCompleted(string ipResult, Regex extractionRegex) {
+
+            if (OperationComplete != null) {
+
+                Match match = extractionRegex.Match(ipResult);
+                if (match.Success) {
+
+                    OperationComplete(
+                        this,
+                        new LookupEventArgs(
+                            ipResult,
+                            false,
+                            false,
+                            false
+                        )
+                    );
+                }
+            }
+        }
+
+        public void getPage_ip4(string url, Regex extractionRegex) {
+
+            try {
+                DateTime now = DateTime.Now;
+                this.timeStart = DateTime.Now;
+
+                Thread thread;
+
+                if (this.isPOSTMethod) {
+                    externalIP.getPage3Thread postMethodRequest = new externalIP.getPage3Thread();
+                    postMethodRequest.isCachePreventAborted = this.isCachePreventAborted;
+                    postMethodRequest.timeOut = this.timeOut;
+                    postMethodRequest.url = url;
+                    postMethodRequest.urlUniqueAdd = this.urlUniqueAdd();
+                    thread = new Thread(
+                        (ThreadStart)delegate {
+                            postMethodRequest.getPage();
+                            LookupCompleted(postMethodRequest.result, extractionRegex);
+                        }
+                    );
+                } else {
+                    externalIP.getPage2Thread getMethodRequest = new externalIP.getPage2Thread();
+                    getMethodRequest.isCachePreventAborted = this.isCachePreventAborted;
+                    getMethodRequest.timeOut = this.timeOut;
+                    getMethodRequest.url = url;
+                    getMethodRequest.urlUniqueAdd = this.urlUniqueAdd();
+                    thread = new Thread(
+                        (ThreadStart)delegate {
+                            getMethodRequest.getPage();
+                            LookupCompleted(getMethodRequest.result, extractionRegex);
+                        }
+                    );
+                }
+                /*, 
+                thread.Start();
+                this.isTimeOut = false;
+                this.timeoutUrl = "";
+                double num;
+                do {
+                    Thread.Sleep(10);
+                    num = DateTime.Now.Subtract(this.timeStart).TotalSeconds * 1000.0;
+                }
+                while (!(num > (double)this.timeOut | !thread.IsAlive));
+                string text;
+                if (!this.isPOSTMethod) {
+                    text = this.cString(getPage2Thread.result, true);
+                } else {
+                    text = this.cString(getPage3Thread.result, true);
+                }
+                if (this.isEmpty(text)) {
+                    this.isTimeOut = true;
+                    this.timeoutUrl = url;
+                }
+                thread.Abort();
+                result = text;
+                 * */
+            } catch (Exception ex) {
+                ProjectData.SetProjectError(ex);
+                ProjectData.ClearProjectError();
+            }
+        }
+
+
 		public string getPage(string url)
 		{
 			string result;
@@ -1976,6 +2165,7 @@ namespace indoo.tools
 			{
 				DateTime now = DateTime.Now;
 				this.timeStart = DateTime.Now;
+
 				externalIP.getPage2Thread getPage2Thread = null;
 				Thread thread;
 				externalIP.getPage3Thread getPage3Thread = null;
@@ -2032,19 +2222,21 @@ namespace indoo.tools
 				thread.Abort();
 				result = text;
 			}
-			catch (Exception expr_175)
+			catch (Exception ex)
 			{
-				ProjectData.SetProjectError(expr_175);
+				ProjectData.SetProjectError(ex);
 				result = "";
 				ProjectData.ClearProjectError();
 			}
 			return result;
 		}
+
 		private string getPage5(string url)
 		{
 			string result = null;
 			return result;
 		}
+
 		private string getPage4(string url)
 		{
 			byte[] bytes = Encoding.ASCII.GetBytes("test");
@@ -2134,6 +2326,12 @@ namespace indoo.tools
 			}
 			return DateAndTime.Now.ToString("?yyMMddHHmmssfffffff");
 		}
+
+        /// <summary>
+        /// Raised on a pool thread when the external address is found, or
+        /// skipped, or timed out.
+        /// </summary>
+        public EventHandler<LookupEventArgs> OperationComplete;
 
         public externalIP() {
             this.writeToOrderOnly = false;

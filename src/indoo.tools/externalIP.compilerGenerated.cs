@@ -5,7 +5,7 @@
 
     // Contains the compiler generated subclasses from externalIP
     public partial class externalIP {
-        
+        /*
         [CompilerGenerated]
         private class _ClosureX__1 {
             public externalIP.getPage2Thread XVBXLocal_VBXt_refXS6;
@@ -34,5 +34,6 @@
         private static int _LambdaX__1(externalIP.order x, externalIP.order y) {
             return x.avgTime.CompareTo(y.avgTime);
         }
+         * */
     }
 }

@@ -32,12 +32,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleColor.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="formatters\FormatterBase.cs" />
+    <Compile Include="formatters\Formatter_Color.cs" />
     <Compile Include="indoo.tools\externalIP.compilerGenerated.cs" />
     <Compile Include="indoo.tools\externalIP.cs" />
+    <Compile Include="indoo.tools\LookupEventArgs.cs" />
     <Compile Include="InterfaceInfo.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="MainEntrypoint.cs" />
+    <Compile Include="ProgramOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
