@@ -14,6 +14,10 @@
         public string IpAddress { get { return _ipAddress; } }
         public bool TimedOut { get { return _timedOut; } }
         public bool SkippedExternalIP { get { return _skippedExternalIP; } }
+        /// <summary>
+        /// True when SkippedExternalIP is true due to the ini file indicating to always
+        /// skip the external ip
+        /// </summary>
         public bool AlwaysSkip { get { return _alwaysSkip; } }
 
         public LookupEventArgs(string ipAddress, bool timedOut, bool skipExternalIP, bool alwaysSkip) {

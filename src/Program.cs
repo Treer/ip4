@@ -1,5 +1,8 @@
 ﻿using indoo.tools;
 
+// This is a bit of a frankenstein program because it's built on top of another program
+// (outerIP.exe - see externalIP.cs) and is using the persisted settings system from 
+// that program.
 namespace ip4 {
 
     using System;
@@ -50,7 +53,7 @@ namespace ip4 {
             outerIP.processIP_async(
                 options.SaveSkipValue,
                 options.SkipExternalIP,
-                new string[] { }
+                new string[] { "-q" } // supress externalIP from outputting a program title/header;
             );
 
             // create the output-formatter

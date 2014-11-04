@@ -6,7 +6,9 @@
     using System.Net.NetworkInformation;
     using System.Net.Sockets;
 
-
+    /// <summary>
+    /// Provides all the information we intend to display about an interface.
+    /// </summary>
     public class InterfaceInfo {
 
         readonly string _adapterName;

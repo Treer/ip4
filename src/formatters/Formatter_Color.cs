@@ -22,8 +22,9 @@
 
 
         public override void WriteTitle(string name, string version, string description, string copyright) {
+            WriteLine(Verbosity.Default);
             WriteLine(Verbosity.Default, name + " v" + version + " - " + description);
-            WriteLine(Verbosity.Verbose, copyright);
+            WriteLine(Verbosity.Default, copyright);
             WriteLine(Verbosity.Default);
         }
 
@@ -135,7 +136,7 @@
             WriteLine(Verbosity.Default, "External IP address: ");
 
             if (_color) Console.ForegroundColor = ConsoleColor.Red;
-            WriteLine(Verbosity.Default, " No internet connection (operation timed out).");
+            WriteLine(Verbosity.Default, " No internet connection found.");
             if (_color) Console.ForegroundColor = _orginalColor;
         }
 
@@ -151,7 +152,6 @@
                 //Console.Write("Skipped external IP address");
             }
         }
-
 
         public Formatter_Color(Verbosity verbosity, bool color): base(verbosity) {
             

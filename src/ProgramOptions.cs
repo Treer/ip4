@@ -25,6 +25,10 @@
         Verbose =  1
     }
 
+    /// <summary>
+    /// Handles the parsing of the command-line arguments into a form
+    /// ip4 can use.
+    /// </summary>
     public class ProgramOptions {
 
         RunMode      _runMode        = RunMode.ListIPs;
@@ -46,8 +50,9 @@
 
             // The following commands are can be passed through to externalIP,
             // anything else we can ignore.
-            // Reformat to always start with a hyphen.
-            //
+            // args will be reformatted to always start with a hyphen. And -e will
+            // be mapped back to -s, since ip4 is already using -s
+            
             //  -c  create new ini file with default values (overrides old one if exists).
             //  -o  order list of public web pages based on speed for acquiring IP  address.
             //  -p  shows positioned URLs for web pages with external IP and parsing info.
@@ -77,12 +82,17 @@
                         }
                     } else if (operation.Length > 2 && operation[1] == ':') {
 
-                        switch (operation) {
-                            case "p":
-                            case "w":
-                            case "s":
-                            case "t":
-                            case "r":
+                        switch (operation[0]) {
+                            case 'e':
+                                // I have mapped the -s:<regularExpression> option to be -e:
+                                // instead, because -s is being used for "skip external ip lookup"
+                                result = "-s" + arg.Substring(2);
+                                break;
+
+                            case 'r':
+                            case 'p':
+                            case 'w':
+                            case 't':
                                 result = '-' + arg.Substring(1);
                                 break;
                         }

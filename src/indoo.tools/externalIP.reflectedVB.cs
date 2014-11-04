@@ -111,6 +111,7 @@ namespace indoo.tools
         public string txt_invalid1;
         public string txt_ipBracket;
         public string txt_dlFail;
+        public string txt_regexFail;
         public string txt_err1;
         public string txt_err2;
         public string txt_err3;
@@ -122,6 +123,7 @@ namespace indoo.tools
         public string txt_err9;
         public string txt_err10;
         public string txt_infoRegex;
+        public string txt_infoTiming;
         public string txt_info1;
         public string txt_info2;
         public string txt_helpExtended;
@@ -331,7 +333,7 @@ namespace indoo.tools
 		{
 			Debugger.Break();
 		}
-		private void setText()
+		private void setText_original()
 		{
 			this.txtP = "{p}";
 			this.txtC = "' ";
@@ -341,7 +343,8 @@ namespace indoo.tools
 			this.txt_ipBracket = " ({0})";
 			this.txt_result = "Computer's external IP: {0}";
 			this.txt_dlFail = "Download failed: {0}";
-			this.txt_resultVerbose = "External IP={0}, time={1}ms, url={2}";
+            this.txt_regexFail = "Malformed regex: {0}";
+            this.txt_resultVerbose = "External IP={0}, time={1}ms, url={2}";
 			this.txt_timeoutVerbose = "Timeout, time>{0}ms, url={1}";
 			this.txt_timeout = "Timeout > {0}ms.";
             if (String.IsNullOrEmpty(this.txt_copyr)) {
@@ -367,6 +370,7 @@ namespace indoo.tools
 			this.txt_err10 = "{p}ERROR!!!{p}{p}No valid file <exeFile> for execution{p}";
 			this.txt_err10 = "{p}ERROR!!!{p}{p}No valid URL index.{p}";
 			this.txt_infoRegex = "Regular expression successfully parsees this text:{p}{2}{p}from folowing web page in {1} seconds:{p}{0}{p}";
+            this.txt_infoTiming = "Timing and ordering the web pages...";
 			this.txt_info1 = "New ini file is written to:{p}    {0}{p}{p}See file contents for future instruction and change data if necessary.{p}";
 			this.txt_info2 = "External IP is parsed from public web page. This list contains URL {p}";
 			this.txt_info2 += "addresses for web pages with written external IP and appropriate {p}";
@@ -935,6 +939,7 @@ namespace indoo.tools
 								this.exitApp = true;
 								break;
 							case externalIP.modes.orderURLs:
+                                consoleWriteLine(changeP(txt_infoTiming));
 								this.setUrlList("", "");
 								this.exitApp = true;
 								break;
@@ -1245,6 +1250,9 @@ namespace indoo.tools
 				return this.cString(text, false);
 			}
 		}
+        /// <summary>
+        /// Replaces the {p} with crlf
+        /// </summary>
 		private string changeP(string text)
 		{
 			return Strings.Replace(text, this.txtP, "\r\n", 1, -1, CompareMethod.Binary);
@@ -1510,7 +1518,7 @@ namespace indoo.tools
 					externalIP.order value = ordList[i];
 					bool flag = false;
 					this.consoleWrite(this.txt_site + value.urlLineTrim);
-					int num2 = 0;
+					int retry = 0;
 					do
 					{
 						string text = "";
@@ -1546,9 +1554,21 @@ namespace indoo.tools
 						}
 						DateTime now = DateTime.Now;
 						string input2 = this.cString(this.getPage(url), false);
-						Regex regex2 = new Regex(value.regexLineTrim);
-						Match match2 = regex2.Match(input2);
-						if (match2.Success)
+
+                        bool matched = false;
+                        Match match2 = null;
+                        string regExError = null;
+                        try {
+                            Regex regex2 = new Regex(value.regexLineTrim);
+                            match2 = regex2.Match(input2);
+                            matched = match2.Success;
+                        } catch (ArgumentException ex) {
+                            regExError = ex.Message;
+                        } catch {
+                            // leave match2 as null and matched as false
+                        }
+
+						if (matched)
 						{
 							string text3 = Strings.Trim(this.cString(match2.Groups[this.regexGroupname].Value, false));
 							if (this.IsAddressValid(text3))
@@ -1558,36 +1578,44 @@ namespace indoo.tools
 									value.ipAddress = text;
 								}
 								double totalSeconds = DateTime.Now.Subtract(now).TotalSeconds;
-								value.time[num2] = totalSeconds;
+								value.time[retry] = totalSeconds;
 							}
-						}
-						else
-						{
+						} else if (match2 == null) {
+                            string errorMessage;
+                            if (regExError == null) {
+                                // Just show the regex expression, since we don't have a better error
+                                errorMessage = String.Format(this.txt_regexFail, value.regexLineTrim);
+                            } else {
+                                errorMessage = String.Format(this.txt_regexFail, regExError);
+                            }
+                            this.consoleWriteLine("");
+                            this.consoleWriteLine(errorMessage);
+                        } else {
 							this.consoleWriteLine("");
 							this.consoleWriteLine(string.Format(this.txt_dlFail, value.urlLineTrim));
 						}
-						num2++;
+						retry++;
 					}
-					while (num2 <= 3);
-					double num3 = 0.0;
-					int num4 = 1;
-					do
-					{
+					while (retry <= 3);
+					double totalTime_seconds = 0.0;
+
+					int counter = 1;
+					do {
 						unchecked
 						{
-							num3 += value.time[num4];
+                            totalTime_seconds += value.time[counter];
 						}
-						num4++;
-					}
-					while (num4 <= 3);
+                        counter++;
+					} while (counter <= 3);
+
 					if (!this.isEmpty(value.ipAddress))
 					{
 						this.consoleWrite(string.Format(this.txt_ipBracket, value.ipAddress));
 					}
-					if (num3 > 0.0)
+					if (totalTime_seconds > 0.0)
 					{
-						value.avgTime = num3 / 4.0;
-						this.consoleWriteLine(this.txt_time1 + Conversions.ToString(num3));
+						value.avgTime = totalTime_seconds / 4.0;
+						this.consoleWriteLine(this.txt_time1 + Conversions.ToString(totalTime_seconds));
 					}
 					else
 					{
