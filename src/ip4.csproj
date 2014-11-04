@@ -37,6 +37,7 @@
     <Compile Include="formatters\Formatter_Color.cs" />
     <Compile Include="indoo.tools\externalIP.compilerGenerated.cs" />
     <Compile Include="indoo.tools\externalIP.cs" />
+    <Compile Include="indoo.tools\externalIP.reflectedVB.cs" />
     <Compile Include="indoo.tools\LookupEventArgs.cs" />
     <Compile Include="InterfaceInfo.cs" />
     <Compile Include="Program.cs" />

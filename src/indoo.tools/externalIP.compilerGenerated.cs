@@ -1,9 +1,11 @@
-﻿namespace indoo.tools {
+﻿// This partial class-file contains the compiler generated subclasses 
+// from externalIP, which won't be needed as the compiler will just generate
+// them again.
+namespace indoo.tools {
 
     using System.Runtime.CompilerServices;
     using System.Diagnostics;
 
-    // Contains the compiler generated subclasses from externalIP
     public partial class externalIP {
         /*
         [CompilerGenerated]

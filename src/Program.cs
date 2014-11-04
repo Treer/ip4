@@ -48,9 +48,9 @@ namespace ip4 {
             // Start the externalIP threads
             _externalOperationComplete = new ManualResetEvent(false);
             outerIP.processIP_async(
-                options.SkipExternalIP, 
-                options.SaveSkipValue, 
-                new string[] {}
+                options.SaveSkipValue,
+                options.SkipExternalIP,
+                new string[] { }
             );
 
             // create the output-formatter
@@ -102,6 +102,10 @@ namespace ip4 {
             return result;
         }
 
+        /// <summary>
+        /// Pass the command-line arguments through to externalIP and 
+        /// let it do its thing.
+        /// </summary>
         int RunExternalIPs(ProgramOptions options) {
 
             int result = cReturnSuccess;            
