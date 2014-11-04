@@ -7,6 +7,7 @@ namespace indoo.tools
     using System.Text.RegularExpressions;
     using Microsoft.VisualBasic.CompilerServices;
     using System.Threading;
+    using Microsoft.VisualBasic;
 
     /// <summary>
     /// externalIP is the main class of outerIP.exe, and is providing 
@@ -23,178 +24,64 @@ namespace indoo.tools
     /// </summary>
 	public partial class externalIP
 	{
-        public void processIP_async(bool saveSkipIPValue, bool skipIPValue, string[] args) {
 
-            this.initValues();
-            this.setArguments(args);
-            this.setVariables();
-            this.fillIniFileParameters(args);
+        public void processIP_async(bool save_SkipIPLookupArg, bool skipIPLookupArg, string[] args) {
 
-			List<string> list = new List<string>();
-			int firstUrl_index = 0;
-            int lastUrl_index = this.urls.Count - 1;
+            Thread thread = new Thread(
+                (ThreadStart)delegate {
 
-			if (this.positionIndex > 0) {
-			    // only use one url
-				firstUrl_index = this.positionIndex - 1;
-				lastUrl_index = firstUrl_index;
+                    // Perform the threaded operation using a seperate externalIP
+                    // instance to ensure there is only ever one thread acting on 
+                    // a class instance.
+                    externalIP workerExternalIP = new externalIP();
 
-			} else if (this.positionIndex == 0) {
-			    // use a single random url
-				Random random = new Random();
-				firstUrl_index = random.Next(this.urls.Count - 1);
-				lastUrl_index = firstUrl_index;
-            }
+                    workerExternalIP.initValues();
+                    workerExternalIP.setArguments(args);
+                    workerExternalIP.isQuiet = true; // supress externalIP from outputting its program title;
+                    if (save_SkipIPLookupArg) {
+                        // Inject this new value directly (immediately after the call 
+                        // to setArguments()), rather than do it by adding argument 
+                        // parsing to externalIP for skipIPLookup.
+                        workerExternalIP.skipIPLookup = skipIPLookupArg;
+                    }
 
-			for (int i = firstUrl_index; i <= lastUrl_index; i++)
-			{
-				this.timeStart = DateTime.Now;
-				try	{
-					string text = "";
-					if (!this.isEmpty(this.ips[i]))	{
+                    workerExternalIP.setVariables();
+                    workerExternalIP.fillIniFileParameters(args);
 
-                        string url = this.httpStart2 + this.ips[i];
-                        Regex regex = new Regex(this.regExs[i]);
+                    if (save_SkipIPLookupArg) {
+                        workerExternalIP.configValue(workerExternalIP.paramSkipIP, skipIPLookupArg ? "true" : "false");
+                    }
 
-                        getPage_ip4(url, regex);
-                        /*
-						string input = this.cString(this.getPage(url), false);
 
-						Regex regex = new Regex(this.regExs[i]);
-						Match match = regex.Match(input);
-						if (match.Success) {
-							text = Strings.Trim(this.cString(match.Groups[this.regexGroupname].Value, false));
+                    // workerExternalIP.skipIPLookup will now have been set from the ini file value
+                    // if save_SkipIPLookupArg didn't cause us to already inject a value into it.
+                    // (if we did inject a value then it will have been saved to the ini file)
+                    bool alwaysSkipIPLookup = workerExternalIP.skipIPLookup == true;
+                    bool skipIPLookup = skipIPLookupArg || alwaysSkipIPLookup;
+                    
+                    string ipResult = null;
+                    if (!skipIPLookup) {
+                        ipResult = workerExternalIP.processIP();
+                    }
 
-							if (this.setResultIp(ref text, ref list, ref this.isIpFromTwoSources, url) && !this.isAllURLs)
-							{
-								this.checkLastIp(text);
-								string result = text;
-								return result;
-							}
-						}*/
-					}
-					if (this.isEmpty(text))
-					{
-						string url = this.urls[i];
-						string input2 = this.cString(this.getPage(url), false);
-						Regex regex2 = new Regex(this.regExs[i]);
-						Match match2 = regex2.Match(input2);
-						if (match2.Success)
-						{
-							text = Strings.Trim(this.cString(match2.Groups[this.regexGroupname].Value, false));
-							if (this.setResultIp(ref text, ref list, ref this.isIpFromTwoSources, url) && !this.isAllURLs)
-							{
-								this.checkLastIp(text);
-								string result = text;
-								//return result;
-							}
-						}
-					}
-                    /*
-					if (this.isAllURLs)
-					{
-						this.urlResult = url;
-						this.x++;
-						this.consoleWrite(Conversions.ToString(this.x) + ". ");
-						this.checkLastIp(text);
-						this.writeIpAddress(text);
-					}*/
-				}
-				catch (Exception expr_221)
-				{
-					ProjectData.SetProjectError(expr_221);
-					ProjectData.ClearProjectError();
-				}
-			}
-			//return "";
-		}
-
-        void LookupCompleted(string ipResult, Regex extractionRegex) {
-
-            if (OperationComplete != null) {
-
-                Match match = extractionRegex.Match(ipResult);
-                if (match.Success) {
-
-                    OperationComplete(
-                        this,
-                        new LookupEventArgs(
-                            ipResult,
-                            false,
-                            false,
-                            false
-                        )
+                    LookupEventArgs lookupResult = new LookupEventArgs(
+                        ipResult,
+                        String.IsNullOrEmpty(ipResult) && workerExternalIP.isTimeOut, // the way externalIP.getPage() is written, any failure to get iniFileText from a website is considered a timeout, and isTimeOut only gives the result of the last attempt.
+                        skipIPLookup,
+                        alwaysSkipIPLookup
                     );
+
+                    if (OperationComplete != null) {
+                        OperationComplete(this, lookupResult);
+                    }
                 }
-            }
+            );
+
+            thread.Start();
         }
-
-        public void getPage_ip4(string url, Regex extractionRegex) {
-
-            try {
-                DateTime now = DateTime.Now;
-                this.timeStart = DateTime.Now;
-
-                Thread thread;
-
-                if (this.isPOSTMethod) {
-                    externalIP.getPage3Thread postMethodRequest = new externalIP.getPage3Thread();
-                    postMethodRequest.isCachePreventAborted = this.isCachePreventAborted;
-                    postMethodRequest.timeOut = this.timeOut;
-                    postMethodRequest.url = url;
-                    postMethodRequest.urlUniqueAdd = this.urlUniqueAdd();
-                    thread = new Thread(
-                        (ThreadStart)delegate {
-                            postMethodRequest.getPage();
-                            LookupCompleted(postMethodRequest.result, extractionRegex);
-                        }
-                    );
-                } else {
-                    externalIP.getPage2Thread getMethodRequest = new externalIP.getPage2Thread();
-                    getMethodRequest.isCachePreventAborted = this.isCachePreventAborted;
-                    getMethodRequest.timeOut = this.timeOut;
-                    getMethodRequest.url = url;
-                    getMethodRequest.urlUniqueAdd = this.urlUniqueAdd();
-                    thread = new Thread(
-                        (ThreadStart)delegate {
-                            getMethodRequest.getPage();
-                            LookupCompleted(getMethodRequest.result, extractionRegex);
-                        }
-                    );
-                }
-                /*, 
-                thread.Start();
-                this.isTimeOut = false;
-                this.timeoutUrl = "";
-                double num;
-                do {
-                    Thread.Sleep(10);
-                    num = DateTime.Now.Subtract(this.timeStart).TotalSeconds * 1000.0;
-                }
-                while (!(num > (double)this.timeOut | !thread.IsAlive));
-                string text;
-                if (!this.isPOSTMethod) {
-                    text = this.cString(getPage2Thread.result, true);
-                } else {
-                    text = this.cString(getPage3Thread.result, true);
-                }
-                if (this.isEmpty(text)) {
-                    this.isTimeOut = true;
-                    this.timeoutUrl = url;
-                }
-                thread.Abort();
-                result = text;
-                 * */
-            } catch (Exception ex) {
-                ProjectData.SetProjectError(ex);
-                ProjectData.ClearProjectError();
-            }
-        }
-
-
 
         /// <summary>
-        /// Raised on a pool thread when the external address is found, or
+        /// Invoked on a pool thread when the external address is found, or
         /// skipped, or timed out.
         /// </summary>
         public EventHandler<LookupEventArgs> OperationComplete;

@@ -30,13 +30,25 @@ namespace indoo.tools
     public partial class externalIP
 	{
         private List<string> urls;
+        /// <summary>
+        /// Cached IP address for the urls in the this.urls list
+        /// </summary>
         private List<string> ips;
+        /// <summary>
+        /// Regular expressions for extracting the IP from the result returned by the same url in the this.urls list
+        /// </summary>
         private List<string> regExs;
         public string iPList;
         public string exeFile;
+        /// <summary>
+        /// A setting for ip4 that we keep in the ini file, if true then ip4 shouldn't 
+        /// lookup the external IP. Null means the value hasn't be set or loaded yet.
+        /// </summary>
+        public bool? skipIPLookup;
         private string paramIPs;
         private string paramFile;
         private string paramLastIP;
+        private string paramSkipIP;
         private string missingParams;
         /// <summary>
         /// const "http"
@@ -70,6 +82,9 @@ namespace indoo.tools
         public int repeatPause;
         public bool isAllURLs;
         private externalIP.modes _mode;
+        /// <summary>
+        /// Set true if program can't write to ini file and this.txt_err1 has been displayed
+        /// </summary>
         private bool isWarnWritten;
         public string urlResult;
         public string urlResult2;
@@ -398,9 +413,12 @@ namespace indoo.tools
 			this.txt_ini += "' {p}";
 			this.txt_ini += "' {p}";
 			this.txt_ini += "' Configuration:{p}";
-			this.txt_ini += "lastIP = 127.0.0.1{p}";
-			this.txt_ini += "checkIPs = 127.0.0.1{p}";
-			this.txt_ini += "runFile = c:\\something.bat{p}";
+            // lastIp, checkIPs, and runFile are all configuration settings for features of
+            // outerIP.exe that ip4.exe doesn't provide.
+			//this.txt_ini += "lastIP = 127.0.0.1{p}";
+			//this.txt_ini += "checkIPs = 127.0.0.1{p}";
+			//this.txt_ini += "runFile = c:\\something.bat{p}";
+            this.txt_ini += "skipExternalIPLookup = false{p}";
 			this.txt_ini += "http://api.externalip.net/ip{p}";
 			this.txt_ini += "(?<content>.*){p}";
 			this.txt_ini += "http://www.whatsmyip.us/{p}";
@@ -780,6 +798,9 @@ namespace indoo.tools
 				this.output = this.output + Text + "\r\n";
 			}
 		}
+        /// <summary>
+        /// sets the this.txt_* vars and prints the copyright
+        /// </summary>
 		public void setVariables()
 		{
 			this.setText();
@@ -800,10 +821,12 @@ namespace indoo.tools
 			this.regExs = new List<string>();
 			this.iPList = "";
 			this.exeFile = "";
+            this.skipIPLookup = null;
 			this.paramIPs = "checkIPs";
 			this.paramFile = "runFile";
 			this.paramLastIP = "lastIP";
-			this.httpStart = "http";
+            this.paramSkipIP = "skipExternalIPLookup";
+            this.httpStart = "http";
 			this.httpStart2 = "http://";
 			this.regexGroupname = "content";
 			this.isPublic = false;
@@ -981,6 +1004,9 @@ namespace indoo.tools
 			this.fillIniFileParameters(this.arguments);
 			this.exec();
 		}
+        /// <summary>
+        /// Outputs the IP address to the console, based on quiet/verbose settings
+        /// </summary>
 		private void writeIpAddress(string ipAddress)
 		{
 			int num = checked((int)Math.Round(unchecked(DateTime.Now.Subtract(this.timeStart).TotalSeconds * 1000.0)));
@@ -1150,40 +1176,42 @@ namespace indoo.tools
 			streamWriter.Write(content);
 			streamWriter.Close();
 		}
+        /// <summary>
+        /// Sets the config option "name" to the specified value and saves the config file
+        /// </summary>
 		public string configValue(string name, string value)
 		{
 			string text = null;
 			name = Strings.Trim(Strings.LCase(this.cString(name, false)));
-			string text2 = "";
-			if (!this.setIniFile(ref text2))
+			string iniFileContent = "";
+			if (!this.setIniFile(ref iniFileContent))
 			{
 				return "";
 			}
-			text2 = this.setLineEndToCr(text2);
-			string[] array = Strings.Split(text2, "\r", -1, CompareMethod.Binary);
-			string text3 = "";
-			int arg_51_0 = 0;
+			iniFileContent = this.setLineEndToCr(iniFileContent);
+			string[] iniFileLines = Strings.Split(iniFileContent, "\r", -1, CompareMethod.Binary);
+			string outputLines = "";
 			checked
 			{
-				int num = array.Length - 1;
-				for (int i = arg_51_0; i <= num; i++)
+				int num = iniFileLines.Length - 1;
+				for (int i = 0; i <= num; i++)
 				{
-					string text4 = Strings.Trim(this.cString(array[i], false));
+					string line = Strings.Trim(this.cString(iniFileLines[i], false));
 					bool flag = false;
-					if (text4.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+					if (line.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
 					{
-						int num2 = Strings.InStr(text4, "=", CompareMethod.Binary);
-						if (Operators.CompareString(Strings.LCase(Strings.Trim(Strings.Left(text4, num2 - 1))), name, false) == 0 && Strings.Len(text4) > num2 + 1)
+						int num2 = Strings.InStr(line, "=", CompareMethod.Binary);
+						if (Operators.CompareString(Strings.LCase(Strings.Trim(Strings.Left(line, num2 - 1))), name, false) == 0 && Strings.Len(line) > num2 + 1)
 						{
-							text = Strings.Trim(Strings.Mid(text4, num2 + 1));
+							text = Strings.Trim(Strings.Mid(line, num2 + 1));
 							flag = true;
 						}
 					}
 					if (flag & !Information.IsNothing(value))
 					{
-						text3 = string.Concat(new string[]
+						outputLines = string.Concat(new string[]
 						{
-							text3,
+							outputLines,
 							name,
 							" = ",
 							value,
@@ -1192,27 +1220,27 @@ namespace indoo.tools
 					}
 					else
 					{
-						text3 = text3 + array[i] + "\r\n";
+						outputLines = outputLines + iniFileLines[i] + "\r\n";
 					}
 				}
-				while (text3.EndsWith("\r\n\r\n"))
+				while (outputLines.EndsWith("\r\n\r\n"))
 				{
-					text3 = Strings.Left(text3, Strings.Len(text3) - Strings.Len("\r\n"));
+					outputLines = Strings.Left(outputLines, Strings.Len(outputLines) - Strings.Len("\r\n"));
 				}
 				if (!Information.IsNothing(value))
 				{
 					if (Information.IsNothing(text))
 					{
-						text3 = string.Concat(new string[]
+						outputLines = string.Concat(new string[]
 						{
-							text3,
+							outputLines,
 							name,
 							" = ",
 							value,
 							"\r\n"
 						});
 					}
-					this.writeFile(this.myIniFile, text3);
+					this.writeFile(this.myIniFile, outputLines);
 				}
 				return this.cString(text, false);
 			}
@@ -1221,6 +1249,9 @@ namespace indoo.tools
 		{
 			return Strings.Replace(text, this.txtP, "\r\n", 1, -1, CompareMethod.Binary);
 		}
+        /// <summary>
+        /// Writes iniFileText to the ini file, and returns true if this was successfull.
+        /// </summary>
 		private bool writeFile(string path, string text)
 		{
 			try
@@ -1240,14 +1271,18 @@ namespace indoo.tools
 			}
 			return !this.isWarnWritten;
 		}
+        /// <summary>
+        /// Loads values from the inifile into exeFile, iPList, skipIPLookup, and the url/regex/ips lists.
+        /// Note: args isn't used
+        /// </summary>
 		private void fillIniFileParameters(string[] args)
 		{
-			string text = "";
+			string iniFileText = "";
 			try
 			{
 				if (File.Exists(this.myIniFile))
 				{
-					text = this.readFileText(this.myIniFile);
+					iniFileText = this.readFileText(this.myIniFile);
 				}
 			}
 			catch (Exception ex)
@@ -1255,41 +1290,52 @@ namespace indoo.tools
 				ProjectData.SetProjectError(ex);
 				ProjectData.ClearProjectError();
 			}
-			if (this.isEmpty(text))
+			if (this.isEmpty(iniFileText))
 			{
-				text = this.getDefaultIniFileText();
+				iniFileText = this.getDefaultIniFileText();
 			}
-			text = this.setLineEndToCr(text);
-			string[] array = Strings.Split(text, "\r", -1, CompareMethod.Binary);
-			int arg_5E_0 = 0;
+			iniFileText = this.setLineEndToCr(iniFileText);
+			string[] iniFileLines = Strings.Split(iniFileText, "\r", -1, CompareMethod.Binary);
 			checked
 			{
-				int num = array.Length - 1;
-				for (int i = arg_5E_0; i <= num; i++)
+                // load the exeFile, iPList, and skipIPLookup
+				int num = iniFileLines.Length - 1;
+				for (int i = 0; i <= num; i++)
 				{
-					array[i] = Strings.Trim(this.cString(array[i], false));
-					if (array[i].StartsWith("'") | array[i].StartsWith("#"))
+					iniFileLines[i] = Strings.Trim(this.cString(iniFileLines[i], false));
+					if (iniFileLines[i].StartsWith("'") | iniFileLines[i].StartsWith("#"))
 					{
-						array[i] = "";
+                        // line is a comment
+						iniFileLines[i] = "";
 					}
 					if (this.isEmpty(this.iPList))
 					{
-						array[i] = this.changeParamStart(array[i], this.paramIPs);
-						this.fillParam(this.paramIPs, array[i], ref this.iPList);
+						iniFileLines[i] = this.changeParamStart(iniFileLines[i], this.paramIPs);
+						this.fillParam(this.paramIPs, iniFileLines[i], ref this.iPList);
 					}
 					if (this.isEmpty(this.exeFile))
 					{
-						array[i] = this.changeParamStart(array[i], this.paramFile);
-						this.fillParam(this.paramFile, array[i], ref this.exeFile);
+						iniFileLines[i] = this.changeParamStart(iniFileLines[i], this.paramFile);
+						this.fillParam(this.paramFile, iniFileLines[i], ref this.exeFile);
 					}
+                    if (!this.skipIPLookup.HasValue) 
+                    {
+                        iniFileLines[i] = this.changeParamStart(iniFileLines[i], this.paramSkipIP);
+                        string value = "";
+                        this.fillParam(this.paramSkipIP, iniFileLines[i], ref value);
+                        if (!String.IsNullOrEmpty(value)) {
+                            this.skipIPLookup = value.ToLower().Contains("true");
+                        }
+                    }
 				}
-				int arg_119_0 = 0;
-				int num2 = array.Length - 1;
-				for (int j = arg_119_0; j <= num2; j++)
+
+                // load the url/regex/ips
+				int num2 = iniFileLines.Length - 1;
+				for (int j = 0; j <= num2; j++)
 				{
-					if ((array[j].StartsWith(this.httpStart) & array.Length > j) && Conversions.ToDouble(Strings.Trim(Conversions.ToString(Strings.Len(array[j + 1])))) > 1.0)
+					if ((iniFileLines[j].StartsWith(this.httpStart) & iniFileLines.Length > j) && Conversions.ToDouble(Strings.Trim(Conversions.ToString(Strings.Len(iniFileLines[j + 1])))) > 1.0)
 					{
-						string text2 = this.cString(array[j], false);
+						string text2 = this.cString(iniFileLines[j], false);
 						this.urls.Add(Strings.Split(text2, ";", -1, CompareMethod.Binary)[0]);
 						if (text2.Contains(";"))
 						{
@@ -1299,7 +1345,7 @@ namespace indoo.tools
 						{
 							this.ips.Add("");
 						}
-						this.regExs.Add(array[j + 1]);
+						this.regExs.Add(iniFileLines[j + 1]);
 						j++;
 					}
 				}
@@ -1314,6 +1360,11 @@ namespace indoo.tools
 			file = Strings.Replace(file, "\r\r", "\r", 1, -1, CompareMethod.Binary);
 			return file;
 		}
+        /// <summary>
+        /// Reads the ini file, creating it if it doesn't exist. (Then rewrites it again for some reason)
+        /// Returns false if ini file couldn't be written to.
+        /// </summary>
+        /// <param name="file">Receives the contents of the ini file</param>
 		private bool setIniFile(ref string file)
 		{
 			if (!File.Exists(this.myIniFile) && !this.writeFile(this.myIniFile, this.getDefaultIniFileText()))
@@ -1712,6 +1763,10 @@ namespace indoo.tools
 				this.arguments = new string[0];
 			}
 		}
+        /// <summary>
+        /// If the line starts with the param regardless of case, then it is reformated to start with 
+        /// param exactly.
+        /// </summary>
 		private string changeParamStart(string line, string param)
 		{
 			line = this.cString(line, false);
@@ -2047,7 +2102,7 @@ namespace indoo.tools
 				{
 					text = this.cString(getPage3Thread.result, true);
 				}
-				if (this.isEmpty(text))
+                if (this.isEmpty(text))
 				{
 					this.isTimeOut = true;
 					this.timeoutUrl = url;
@@ -2109,6 +2164,9 @@ namespace indoo.tools
 			}
 			return false;
 		}
+        /// <summary>
+        /// Sets paramValue if line begins with paramName
+        /// </summary>
 		private void fillParam(string paramName, string line, ref string paramValue)
 		{
 			paramValue = this.cString(paramValue, false);

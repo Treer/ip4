@@ -19,10 +19,10 @@
         Json
     }
 
-    public enum Verbosity {
-        Default,
-        Quiet,
-        Verbose
+    public enum Verbosity: int {
+        Quiet   = -1,
+        Default =  0,
+        Verbose =  1
     }
 
     public class ProgramOptions {
@@ -95,7 +95,7 @@
         public RunMode RunMode { get { return _runMode; } }
         public OutputFormat OutputFormat { get { return _outputFormat; } }
         public bool SkipExternalIP { get { return _skipExternalIP; } }
-        public bool SaveSkipValue { get { return _skipExternalIP; } }
+        public bool SaveSkipValue { get { return _saveSkipValue; } }
         public string[] PassthroughArgs { get { return _passthroughArgs.ToArray(); } }
         public Verbosity Verbosity { get { return _verbosity; } }
 
