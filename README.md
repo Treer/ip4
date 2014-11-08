@@ -8,6 +8,9 @@ accessible.
  * [Executable](https://github.com/Treer/ip4/releases/latest)
  * [Source code](https://github.com/Treer/ip4)
 
+<img src="https://treer.github.io/images/ip4screenshot.png" width="677" height="343" />
+
+
 USAGE:
     
         ip4 [options]
