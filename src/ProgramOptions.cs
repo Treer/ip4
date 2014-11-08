@@ -132,35 +132,35 @@
                         ignoreExternalIpArgs = true;
                         break;
 
-                    case "--formatxml":
+                    case "--format-xml":
                     case "-fx":
                     case "/fx":
                         _outputFormat = OutputFormat.Xml;
                         ignoreExternalIpArgs = true;
                         break;
 
-                    case "--formatjson":
+                    case "--format-json":
                     case "-fj":
                     case "/fj":
                         _outputFormat = OutputFormat.Json;
                         ignoreExternalIpArgs = true;
                         break;
 
-                    case "--formatplain":
+                    case "--format-plain":
                     case "-fp":
                     case "/fp":
                         _outputFormat = OutputFormat.Plain;
                         ignoreExternalIpArgs = true;
                         break;
 
-                    case "--skipexternalip":
+                    case "--skip-externalip":
                     case "-s":
                     case "/s":
                         _skipExternalIP = true;
                         ignoreExternalIpArgs = true;
                         break;
 
-                    case "--skipexternalipon":
+                    case "--skip-externalip-on":
                     case "-s:on":
                     case "/s:on":
                         _skipExternalIP = true;
@@ -168,7 +168,7 @@
                         ignoreExternalIpArgs = true;
                         break;
 
-                    case "--skipexternalipoff":
+                    case "--skip-externalip-off":
                     case "-s:off":
                     case "/s:off":
                         _skipExternalIP = false;

@@ -138,13 +138,12 @@ namespace indoo.tools
             //    this.txt_ini += "checkIPs = 127.0.0.1{p}";
             //    this.txt_ini += "runFile = c:\\something.bat{p}";
 
+            this.txt_ini += "skipExternalIPLookup = false{p}";
+
             // http://www.google.com/search?q=what+is+my+ip
             // \<div\ class\="[^"]*"\>(?<content>.*)\<\/div\>\<div\ class\="[^"]*"\>Your\ public\ IP\ address\<\/div\>
-
-
-            this.txt_ini += "skipExternalIPLookup = false{p}";
-            this.txt_ini += "http://api.externalip.net/ip{p}";
-            this.txt_ini += "(?<content>.*){p}";
+            //this.txt_ini += "http://api.externalip.net/ip{p}";
+            //this.txt_ini += "(?<content>.*){p}";
             this.txt_ini += "http://www.whatsmyip.us/{p}";
             this.txt_ini += "copyClip\\(\\)\"\\>\\s(?<content>.*?)\\<\\/textarea\\>{p}";
             this.txt_ini += "http://2ip.ru/{p}";
@@ -153,8 +152,11 @@ namespace indoo.tools
             this.txt_ini += "\\<input\\ type\\=\"text\"\\ value\\=\"(?<content>.*?)\"\\ \\/\\>\\<\\/h1\\>{p}";
             this.txt_ini += "http://whatismyipaddress.com/{p}";
             this.txt_ini += "\\<a\\ href\\=\"\\/ip\\/(?<content>.*?)\"\\>\\<img\\ src\\=\"{p}";
+            this.txt_ini += "http://icanhazip.com/{p}";
+            this.txt_ini += "(?<content>.*){p}";
             this.txt_ini += "http://www.myip.ru/{p}";
             this.txt_ini += "\\<TD\\ bgcolor\\=white\\ align\\=center\\ valign\\=middle\\>(?<content>.*?)\\<\\/TD\\>{p}";
+        
 
             // The help strings should not be used, as ip4 provides its own
             this.txt_help = "Help error: J8";
