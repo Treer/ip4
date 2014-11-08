@@ -26,6 +26,7 @@
         public abstract void WriteExternalIP(string ipAddress);
         public abstract void WriteExternalIPTimedOut();
         public abstract void WriteExternalIPSkipped(bool alwaysSkip);
+        public abstract void WriteExternalIPConsoleOutput(string consoleOutput);
 
         public FormatterBase(Verbosity verbosity) {
             Verbosity = verbosity;

@@ -63,7 +63,7 @@
             //  -w:<webPage>              web page url. Works with -s switch.
             //  -t:<miliseconds>          download timeout. Default value is 10000.
             //  -s:<regularExpression>    regular expression. Works with -w switch.
-            //  -r:<count>[,<seconds>]    use -r:0 or just -r for infinite repetition.
+            //  -r:<count>[,<seconds>]    use -r:0 or just -r for infinite repetition. - NOTE: isn't currently actually implemented, due to running externalIP in a thread
 
             if (!String.IsNullOrEmpty(arg) && arg.Length > 1) {
 
@@ -89,7 +89,7 @@
                                 result = "-s" + arg.Substring(2);
                                 break;
 
-                            case 'r':
+                            // case 'r': -r isn't actually implemented, due to running externalIP in a thread
                             case 'p':
                             case 'w':
                             case 't':

@@ -8,6 +8,7 @@ namespace indoo.tools
     using Microsoft.VisualBasic.CompilerServices;
     using System.Threading;
     using Microsoft.VisualBasic;
+    using System.Text;
 
     /// <summary>
     /// externalIP is the main class of outerIP.exe, and is providing 
@@ -92,7 +93,7 @@ namespace indoo.tools
             this.txt_info2 += "for each page in next line:{p}{p}{0}{p}";
             this.txt_info2 += "";
 
-            // Default contents for ini file (appended to bottom of commented-out this.txt_helpExtended)
+            // Default contents for ini file (appended to bottom of apostrophe-commented-out this.txt_helpExtended)
             this.txt_ini = "";
             this.txt_ini += "' {p}";
             this.txt_ini += "' All default settings in this ini file should be valid for successful {p}";
@@ -133,6 +134,11 @@ namespace indoo.tools
             //    this.txt_ini += "lastIP = 127.0.0.1{p}";
             //    this.txt_ini += "checkIPs = 127.0.0.1{p}";
             //    this.txt_ini += "runFile = c:\\something.bat{p}";
+
+            // http://www.google.com/search?q=what+is+my+ip
+            // \<div\ class\="[^"]*"\>(?<content>.*)\<\/div\>\<div\ class\="[^"]*"\>Your\ public\ IP\ address\<\/div\>
+
+
             this.txt_ini += "skipExternalIPLookup = false{p}";
             this.txt_ini += "http://api.externalip.net/ip{p}";
             this.txt_ini += "(?<content>.*){p}";
@@ -148,7 +154,8 @@ namespace indoo.tools
             this.txt_ini += "\\<TD\\ bgcolor\\=white\\ align\\=center\\ valign\\=middle\\>(?<content>.*?)\\<\\/TD\\>{p}";
 
             // The help strings should not be used, as ip4 provides its own
-            this.txt_help = "";
+            this.txt_help = "Help error: J8";
+            /*
             this.txt_help += "Program provides external (public) IP for current computer. External IP is {p}";
             this.txt_help += "acquired using public web pages that provide current IP address. {p}";
             this.txt_help += "{p}";
@@ -163,9 +170,11 @@ namespace indoo.tools
             this.txt_help += "Switch -o is recommended at first use. This requires some time but usually {p}";
             this.txt_help += "less than minute. Command creates ini file with proper order of URLs. See ini {p}";
             this.txt_help += "file contents for details and examples.{p}";
+             */
 
             // The extended help strings are included in the ini file, so have been rewritten for ip4
-            this.txt_helpExtended = "";
+            this.txt_helpExtended = ReplaceCRLFWithP(MainProgramHelp);
+            /*
             this.txt_helpExtended += "Program provides external (public) IP for current computer. External IP is {p}";
             this.txt_helpExtended += "acquired using public web pages that provide IP. Information is parsed {p}";
             this.txt_helpExtended += "utilizing internal data and/or data from ini file. For details see content {p}";
@@ -197,6 +206,8 @@ namespace indoo.tools
             this.txt_helpExtended += "  -r:<count>[,<seconds>]    use -r:0 or just -r for infinite repetition.{p}";
             this.txt_helpExtended += "  -p:<positionIndex>        acquire IP using url at specific position (for {p}";
             this.txt_helpExtended += "                            random page use 0).{p}";
+             */
+            this.txt_helpExtended += "";
             this.txt_helpExtended += "Each command that writes to ini file requires permission for writing at same {p}";
             this.txt_helpExtended += "location as this executable. Functionality of all switches are described in {p}";
             this.txt_helpExtended += "details in ini file.{p}";
@@ -207,28 +218,28 @@ namespace indoo.tools
             this.txt_helpExtended += "eliminates (comment) URLs for pages that are not valid any more. Command {p}";
             this.txt_helpExtended += "requires some time to measure average accessing time for each page. {p}";
             this.txt_helpExtended += "Command also adds IP address where is possible.{p}";
-            this.txt_helpExtended += "{p}EXTERNAL IP CHANGE{p}";
-            this.txt_helpExtended += "When dynamic IP is used then sometimes some action is required. Program can {p}";
-            this.txt_helpExtended += "execute specific exe file <exeFile> (defined in ini file or as parameter) {p}";
-            this.txt_helpExtended += "each time when external IP is changed. Programs can also wait for change with {p}";
-            this.txt_helpExtended += "-r switch. Default value for each repetition is 60 miliseconds (owners of web {p}";
-            this.txt_helpExtended += "pages do not like too much traffic, especially if this is automated), but {p}";
-            this.txt_helpExtended += "this can be changed, example for 30 seconds: -r:0,30. {p}";
-            this.txt_helpExtended += "{p}ANONYMIZE REAL IP ADDRESS{p}";
-            this.txt_helpExtended += "When real IP should be hidden (using virtual machine with TOR, for example) {p}";
-            this.txt_helpExtended += "then -x switch is used. Program compares your public IP with provided list {p}";
-            this.txt_helpExtended += "of IP addresses <ipList>. If any address match then specific program <exeFile> {p}";
-            this.txt_helpExtended += "is executed. When proxy is used for anonymizing, some pages that provide {p}";
-            this.txt_helpExtended += "public IP show your IP address although connection through proxy but due {p}";
-            this.txt_helpExtended += "to proxy settings and/or role real IP address is not necessary hidden. In {p}";
-            this.txt_helpExtended += "this case some pages (whatsmyip.net for example) show your real IP if {p}";
-            this.txt_helpExtended += "available. Even if real IP is hidden some proxies keep log files which {p}";
-            this.txt_helpExtended += "can reveal your real address. {p}";
+            //this.txt_helpExtended += "{p}EXTERNAL IP CHANGE{p}";
+            //this.txt_helpExtended += "When dynamic IP is used then sometimes some action is required. Program can {p}";
+            //this.txt_helpExtended += "execute specific exe file <exeFile> (defined in ini file or as parameter) {p}";
+            //this.txt_helpExtended += "each time when external IP is changed. Programs can also wait for change with {p}";
+            //this.txt_helpExtended += "-r switch. Default value for each repetition is 60 miliseconds (owners of web {p}";
+            //this.txt_helpExtended += "pages do not like too much traffic, especially if this is automated), but {p}";
+            //this.txt_helpExtended += "this can be changed, example for 30 seconds: -r:0,30. {p}";
+            //this.txt_helpExtended += "{p}ANONYMIZE REAL IP ADDRESS{p}";
+            //this.txt_helpExtended += "When real IP should be hidden (using virtual machine with TOR, for example) {p}";
+            //this.txt_helpExtended += "then -x switch is used. Program compares your public IP with provided list {p}";
+            //this.txt_helpExtended += "of IP addresses <ipList>. If any address match then specific program <exeFile> {p}";
+            //this.txt_helpExtended += "is executed. When proxy is used for anonymizing, some pages that provide {p}";
+            //this.txt_helpExtended += "public IP show your IP address although connection through proxy but due {p}";
+            //this.txt_helpExtended += "to proxy settings and/or role real IP address is not necessary hidden. In {p}";
+            //this.txt_helpExtended += "this case some pages (whatsmyip.net for example) show your real IP if {p}";
+            //this.txt_helpExtended += "available. Even if real IP is hidden some proxies keep log files which {p}";
+            //this.txt_helpExtended += "can reveal your real address. {p}";
             this.txt_helpExtended += "{p}ADD OR CHANGE SITES (with testing) {p}";
             this.txt_helpExtended += "Information with external IP is available in public sites. Program {p}";
             this.txt_helpExtended += "downloads site and parse appropriates string. Sites can be add or {p}";
             this.txt_helpExtended += "changed in ini file. Correct parsing can be tested using these switches:{p}";
-            this.txt_helpExtended += "-w and -s switches always should be used together. Both are for testing {p}";
+            this.txt_helpExtended += "-w and -e switches always should be used together. Both are for testing {p}";
             this.txt_helpExtended += "parsed IP address from specific web page using regular expression. Parser {p}";
             this.txt_helpExtended += "uses .net dialect with word 'content' as matching group. When both {p}";
             this.txt_helpExtended += "parameters are provided then program returns parsed contents (this should {p}";
@@ -242,55 +253,78 @@ namespace indoo.tools
             this.txt_helpExtended += "See ini file contents for details and examples.{p}";
         }
 
+        /// <summary>
+        /// Splits the string into lines and ends each of them with {p}
+        /// </summary>
+        string ReplaceCRLFWithP(string text) {
+
+            string[] lines = text.Split('\n');
+
+            StringBuilder result = new StringBuilder(text.Length + 3 * lines.Length);
+            foreach (string line in lines) {
+                result.Append(line.TrimEnd());
+                result.Append(this.txtP);
+            }
+
+            return result.ToString();
+        }
+
+        /// <summary>
+        /// Runs processIP in a seperate thread and raises OperationComplete event when it finishes
+        /// </summary>
         public void processIP_async(bool save_SkipIPLookupArg, bool skipIPLookupArg, string[] args) {
 
             Thread thread = new Thread(
                 (ThreadStart)delegate {
 
-                // Perform the threaded operation using a seperate externalIP
-                // instance to ensure there is only ever one thread acting on 
-                // a class instance.
-                externalIP workerExternalIP = new externalIP();
+                    // Perform the threaded operation using a seperate externalIP
+                    // instance to ensure there is only ever one thread acting on 
+                    // a class instance.
+                    externalIP workerExternalIP = new externalIP();
 
-                workerExternalIP.initValues();
-                workerExternalIP.setArguments(args);
-                if (save_SkipIPLookupArg) {
-                    // Inject this new value directly (immediately after the call 
-                    // to setArguments()), rather than do it by adding argument 
-                    // parsing to externalIP for skipIPLookup.
-                    workerExternalIP.skipIPLookup = skipIPLookupArg;
+                    workerExternalIP.MainProgramHelp = MainProgramHelp;
+                    workerExternalIP.isWritenToConsole = false;
+
+                    workerExternalIP.initValues();
+                    workerExternalIP.setArguments(args);
+                    if (save_SkipIPLookupArg) {
+                        // Inject this new value directly (immediately after the call 
+                        // to setArguments()), rather than do it by adding argument 
+                        // parsing to externalIP for skipIPLookup.
+                        workerExternalIP.skipIPLookup = skipIPLookupArg;
+                    }
+
+                    workerExternalIP.setVariables();
+                    workerExternalIP.fillIniFileParameters(args);
+
+                    if (save_SkipIPLookupArg) {
+                        workerExternalIP.configValue(workerExternalIP.paramSkipIP, skipIPLookupArg ? "true" : "false");
+                    }
+
+
+                    // workerExternalIP.skipIPLookup will now have been set from the ini file value
+                    // if save_SkipIPLookupArg didn't cause us to already inject a value into it.
+                    // (if we did inject a value then it will have been saved to the ini file)
+                    bool alwaysSkipIPLookup = workerExternalIP.skipIPLookup == true;
+                    bool skipIPLookup = skipIPLookupArg || alwaysSkipIPLookup;
+
+                    string ipResult = null;
+                    if (!skipIPLookup) {
+                        ipResult = workerExternalIP.processIP();
+                    }
+
+                    LookupEventArgs lookupResult = new LookupEventArgs(
+                        ipResult,
+                        workerExternalIP.output,
+                        String.IsNullOrEmpty(ipResult) && workerExternalIP.isTimeOut, // the way externalIP.getPage() is written, any failure to get iniFileText from a website is considered a timeout, and isTimeOut only gives the result of the last attempt.
+                        skipIPLookup,
+                        alwaysSkipIPLookup
+                    );
+
+                    if (OperationComplete != null) {
+                        OperationComplete(this, lookupResult);
+                    }
                 }
-
-                workerExternalIP.setVariables();
-                workerExternalIP.fillIniFileParameters(args);
-
-                if (save_SkipIPLookupArg) {
-                    workerExternalIP.configValue(workerExternalIP.paramSkipIP, skipIPLookupArg ? "true" : "false");
-                }
-
-
-                // workerExternalIP.skipIPLookup will now have been set from the ini file value
-                // if save_SkipIPLookupArg didn't cause us to already inject a value into it.
-                // (if we did inject a value then it will have been saved to the ini file)
-                bool alwaysSkipIPLookup = workerExternalIP.skipIPLookup == true;
-                bool skipIPLookup = skipIPLookupArg || alwaysSkipIPLookup;
-
-                string ipResult = null;
-                if (!skipIPLookup) {
-                    ipResult = workerExternalIP.processIP();
-                }
-
-                LookupEventArgs lookupResult = new LookupEventArgs(
-                    ipResult,
-                    String.IsNullOrEmpty(ipResult) && workerExternalIP.isTimeOut, // the way externalIP.getPage() is written, any failure to get iniFileText from a website is considered a timeout, and isTimeOut only gives the result of the last attempt.
-                    skipIPLookup,
-                    alwaysSkipIPLookup
-                );
-
-                if (OperationComplete != null) {
-                    OperationComplete(this, lookupResult);
-                }
-            }
             );
 
             thread.Start();
@@ -303,5 +337,11 @@ namespace indoo.tools
         /// </summary>
         public EventHandler<LookupEventArgs> OperationComplete;
 
+        /// <summary>
+        /// Provides a mechanism for ip4 to give access to its help string
+        /// to externalIP, since externalIP includes the program help in its
+        /// .ini file.
+        /// </summary>
+        public string MainProgramHelp { get; set; }
 	}
 }

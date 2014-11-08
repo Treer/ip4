@@ -83,28 +83,27 @@
                         lineChars += output.Length;
                     }
 
-                    // Show the adapter name
-                    output = info.AdapterName.PadRight(maxNameLength);
-                    int remainingChars = Console.WindowWidth - (1 + lineChars + output.Length);
-                    if (remainingChars < 0) {
-                        output = output.Substring(0, Math.Max(0, output.Length + remainingChars));
-                    }
-
                     if (Verbosity >= Verbosity.Default) {
 
-                        // show the adapter description
+                        // Show the adapter name
+                        output = info.AdapterName.PadRight(maxNameLength);
+                        int remainingChars = Console.WindowWidth - (1 + lineChars + output.Length);
+                        if (remainingChars < 0 && Verbosity < Verbosity.Verbose) {
+                            // Trim the description to ensure the adpater info fits on one line
+                            output = output.Substring(0, Math.Max(0, output.Length + remainingChars));
+                        }
+
                         SetColor(ConsoleColor.White);
                         Console.Write(output);
                         lineChars += output.Length;
 
-                        output = " " + info.AdapterDescription;
 
-                        if (Verbosity < Verbosity.Verbose) {
+                        // show the adapter description
+                        output = " " + info.AdapterDescription;
+                        remainingChars = Console.WindowWidth - (1 + lineChars + output.Length);
+                        if (remainingChars < 0 && Verbosity < Verbosity.Verbose) {
                             // Trim the description to ensure the adpater info fits on one line
-                            remainingChars = Console.WindowWidth - (1 + lineChars + output.Length);
-                            if (remainingChars < 0) {
-                                output = output.Substring(0, Math.Max(0, output.Length + remainingChars));
-                            }
+                            output = output.Substring(0, Math.Max(0, output.Length + remainingChars));
                         }
 
                         SetColor(ConsoleColor.DarkGray);
@@ -152,6 +151,18 @@
                 //Console.Write("Skipped external IP address");
             }
         }
+
+        public override void WriteExternalIPConsoleOutput(string consoleOutput) {
+            if (!String.IsNullOrEmpty(consoleOutput) && !String.IsNullOrEmpty(consoleOutput.Trim())) {
+                // External IP outputted something while looking up the IP, so probably
+                // an error we should report.
+                SetColor(ConsoleColor.DarkCyan);
+                WriteLine(Verbosity.Default);
+                WriteLine(Verbosity.Default, consoleOutput);
+                WriteLine(Verbosity.Default);
+            }
+        }
+
 
         public Formatter_Color(Verbosity verbosity, bool color): base(verbosity) {
             
