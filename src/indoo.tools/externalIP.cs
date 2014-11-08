@@ -305,7 +305,7 @@ namespace indoo.tools
             bool isReadOnlyLocation = false;
             foreach (string location in readOnlyLocations) {
                 string fullLocation = Path.GetFullPath(location).Trim();
-                if (proposed.StartsWith(fullLocation) && fullLocation.Length > 0) {
+                if (proposed.StartsWith(fullLocation, StringComparison.InvariantCultureIgnoreCase) && fullLocation.Length > 0) {
                     isReadOnlyLocation = true;
                     break;
                 }

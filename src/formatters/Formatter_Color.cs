@@ -24,7 +24,7 @@
         public override void WriteTitle(string name, string version, string description, string copyright) {
             WriteLine(Verbosity.Default);
             WriteLine(Verbosity.Default, name + " v" + version + " - " + description);
-            WriteLine(Verbosity.Default, copyright);
+            WriteLine(Verbosity.Verbose, copyright);
             WriteLine(Verbosity.Default);
         }
 
