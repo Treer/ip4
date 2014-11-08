@@ -8,8 +8,7 @@ accessible.
  * [Executable](https://github.com/Treer/ip4/releases/latest)
  * [Source code](https://github.com/Treer/ip4)
 
-
-    USAGE:
+USAGE:
     
         ip4 [options]
     
