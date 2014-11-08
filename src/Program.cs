@@ -13,13 +13,14 @@ namespace ip4 {
     using System.Net.Sockets;
     using System.Threading;
     using System.Diagnostics;
+    using System.IO;
 
 
     public class Program {
 
         internal const string cProgramName = "ip4";
         internal const string cProgramDesc = "List all the IPs!";
-        internal const string cCopyright = "Copyright 2014 primoz@licen.net and glenn@fisher.bio";
+        internal const string cCopyright = "Copyright 2014 primoz@licen.net and Glenn Fisher";
         readonly TimeSpan     cTimeout     = TimeSpan.FromMilliseconds(10000);
 
         internal const int cReturnSuccess = 0;
@@ -32,6 +33,7 @@ namespace ip4 {
 
         externalIP outerIP;
 
+        #region Help text
         public const string cHelp = @"Displays the IP address of each network adapter, as well as the external-
 IP address if the Internet is accessible.
 
@@ -40,16 +42,16 @@ USAGE:
     
     Most useful options:
         
-        -o      Optimizes the order of external-IP services based on 
-                response times. It is recommended that you run ip4 with 
-                this option at least once. The optimized order is saved 
-                and will be used each time ip4 is run.
+        -o      Optimizes the order of external-IP URLs based on response
+                times. It is recommended that you run ip4 with this option
+                at least once. The optimized order is saved and will be 
+                used each time ip4 is run.
 
         -s      Skip the external-IP lookup. When the external IP address 
                 doesn't matter, execution time and service bandwidth can  
                 be saved by skipping unnecessary lookups.
               
-        -s:on   Persists the -s option so that the external-IP lookups are 
+        -s:on   Persists the -s option so that external-IP lookups are 
                 always skipped when ip4 is run (until ip4 is run with the 
                 -s:off option)
 
@@ -85,14 +87,53 @@ USAGE:
 
 
 For more details, see the content of the .ini file located with the ip4
-executable. 
+executable, or sometimes located in %appdata%\ip4\ if the executable's 
+directory isn't writable.
 
-ip4 uses routines from outerIP, a utility by primoz@licen.net which 
-provides external IP address functions, such as launching a script when 
-the external IP address changes. 
+ip4 is free and open source. It uses routines from outerIP, a command-line
+utility by primoz@licen.net which which provides more functions for 
+external IP addresses, such as launching a script when the address 
+changes. 
 OuterIP can be found at http://goo.gl/s6W5wn
 ";
+        #endregion Help text
 
+        #region App.config text
+        const string cAppConfig = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<configuration>
+    <startup>
+      <!-- 
+      This file is automatically created when you run ip4.
+      
+      ip4 is compatible with .Net v2.0, but v4.0 can provide 
+      the mask for an adapter when it's down. 
+      -->
+      <supportedRuntime version=""v4.0""/>
+      <supportedRuntime version=""v2.0.50727""/>
+    </startup>
+</configuration>";
+        #endregion App.config text
+
+        /// <summary>
+        /// Update the application.config file if it's missing
+        /// </summary>
+        void WriteAppConfig() {
+            
+			string assemblyName = Assembly.GetExecutingAssembly().Location;
+            if (assemblyName.ToLowerInvariant().EndsWith(".exe")) {
+                string appConfigPath = assemblyName + ".config";
+
+                if (!File.Exists(appConfigPath)) {
+                    try {
+                        File.WriteAllText(appConfigPath, cAppConfig, Encoding.UTF8);
+                    } catch {
+                        // oh well, it wasn't that important anyway.
+                        // It just gives us the ability to correctly list masks when the 
+                        // adapter is down.
+                    }
+                }
+            }
+        }
 
         void Handle_OperationComplete(object sender, LookupEventArgs args) {
 
@@ -116,6 +157,11 @@ OuterIP can be found at http://goo.gl/s6W5wn
                 options.SkipExternalIP,
                 new string[] { "-q" } // supress externalIP from outputting a program title/header;
             );
+
+            // Now's a good time to create the application.config file if it's missing, because
+            // external IP lookup is happening in another thread so we probably won't be holding
+            // anything up.
+            WriteAppConfig();
 
             // create the output-formatter
             FormatterBase formatter = null;

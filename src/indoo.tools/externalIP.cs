@@ -9,6 +9,7 @@ namespace indoo.tools
     using System.Threading;
     using Microsoft.VisualBasic;
     using System.Text;
+    using System.IO;
 
     /// <summary>
     /// externalIP is the main class of outerIP.exe, and is providing 
@@ -28,7 +29,7 @@ namespace indoo.tools
         /// <summary>
         /// Some strings have been changed to better fit ip4
         /// </summary>
-        private void setText() {
+        void setText() {
             this.txtP = "{p}";
             this.txtC = "' ";
             this.txt_site = "Site: ";
@@ -96,16 +97,16 @@ namespace indoo.tools
             // Default contents for ini file (appended to bottom of apostrophe-commented-out this.txt_helpExtended)
             this.txt_ini = "";
             this.txt_ini += "' {p}";
-            this.txt_ini += "' All default settings in this ini file should be valid for successful {p}";
-            this.txt_ini += "' determination of current public IP address of this computer. Even if this file {p}";
-            this.txt_ini += "' is not in use program uses same data as is written in default ini file to {p}";
-            this.txt_ini += "' acquire IP address. Web pages are downloaded using GET method, in the case {p}";
-            this.txt_ini += "' of problems alternative POST method can be used with -m switch.{p}";
+            this.txt_ini += "' All default settings in this .ini file should be valid for successfully {p}";
+            this.txt_ini += "' determining the current public IP address of this computer. Even if this file{p}";
+            this.txt_ini += "' is not in use, the program uses same data as is written in the default .ini {p}";
+            this.txt_ini += "' file to acquire IP address. Web pages are downloaded using GET method, in the{p}";
+            this.txt_ini += "' case of problems alternative POST method can be used with -m switch.{p}";
             this.txt_ini += "' {p}";
             this.txt_ini += "' Instructions for configuration used in this file:{p}";
-            this.txt_ini += "' Write webpage url (link should not contains semicolon ;){p}";
-            this.txt_ini += "' Url should always start with http. In next line add regular expression {p}";
-            this.txt_ini += "' that extract IP from page, see examples at end of this text. Use {p}";
+            this.txt_ini += "' Write webpage url (link should not contain semicolons ;){p}";
+            this.txt_ini += "' Url should always start with http. In the following line add the regular {p}";
+            this.txt_ini += "' expression that extracts IP from page, see examples at end of this text. Use {p}";
             this.txt_ini += "' parameter 'content' for extracting string with IP address as is shown in {p}";
             this.txt_ini += "' example. Parser uses .net dialect, word 'content' is used for regular {p}";
             this.txt_ini += "' expression's group. Each line with url should be followed with line that {p}";
@@ -117,15 +118,17 @@ namespace indoo.tools
             this.txt_ini += "' without quotes. IP can be add manually or automatically with command -o. IP is {p}";
             this.txt_ini += "' added only when output is same as output for page with normal URL. In this case {p}";
             this.txt_ini += "' page is acquired with IP address - in this case DNS query is eliminated and {p}";
-            this.txt_ini += "' answer is much faster. This also eliminate potent ional DNS problems. Order for {p}";
+            this.txt_ini += "' answer is much faster. This also eliminates potentional DNS problems. Order for {p}";
             this.txt_ini += "' URL and parsing information is also important, faster pages should be listed {p}";
             this.txt_ini += "' first.{p}";
+            /*
             this.txt_ini += "' Line that starts with checkIPs = <ipList> that contains comma separated list {p}";
             this.txt_ini += "' of actual public IP addresses that should not be same as extracted from listed {p}";
             this.txt_ini += "' pages. If this happens then exe file is executed. Exe file can be also provided {p}";
             this.txt_ini += "' in line that starts with runFile = <exeFile>. This functionality can help {p}";
             this.txt_ini += "' protect your privacy - in the case when your actual IP is revealed you can {p}";
             this.txt_ini += "' block all internet traffic, for example. {p}";
+             */ 
             this.txt_ini += "' {p}";
             this.txt_ini += "' {p}";
             this.txt_ini += "' Configuration:{p}";
@@ -206,11 +209,13 @@ namespace indoo.tools
             this.txt_helpExtended += "  -r:<count>[,<seconds>]    use -r:0 or just -r for infinite repetition.{p}";
             this.txt_helpExtended += "  -p:<positionIndex>        acquire IP using url at specific position (for {p}";
             this.txt_helpExtended += "                            random page use 0).{p}";
-             */
+             
             this.txt_helpExtended += "";
-            this.txt_helpExtended += "Each command that writes to ini file requires permission for writing at same {p}";
-            this.txt_helpExtended += "location as this executable. Functionality of all switches are described in {p}";
-            this.txt_helpExtended += "details in ini file.{p}";
+            this.txt_helpExtended += "Each command that writes to .ini file requires permission for writing at same {p}";
+            this.txt_helpExtended += "location as this executable (or in %appdata%\\ip4\\ if executable directory is {p}";
+            this.txt_helpExtended += "not writable). Functionality of all switches are described in detail in the {p}";
+            this.txt_helpExtended += ".ini file.{p}";
+             */ 
             this.txt_helpExtended += "{p}DOWNLOAD SPEED{p}";
             this.txt_helpExtended += "At first use switch -o is recommended because web pages load with different {p}";
             this.txt_helpExtended += "speeds from different locations (globally). This command will optimize order {p}";
@@ -267,6 +272,65 @@ namespace indoo.tools
             }
 
             return result.ToString();
+        }
+
+        /// <summary>
+        /// Adjust the .ini file location to better work with standard windows permissions
+        /// </summary>
+        string RefineIniFileLocation(string iniFileLocation) {
+
+            string proposed = Path.GetFullPath(iniFileLocation).Trim();
+
+            // Try to guess any read-only locations where people are likely to keep their 
+            // command-line utils.
+            // I'm doing it this way rather than testing whether the directory is read-only
+            // because I want the app to conform to Windows standards when it has to (e.g. 
+            // don't be writing to program files), rather than never keeping the .ini with 
+            // the executable. If the user wants to put it in some custom read-only location
+            // then they can also set up the permissions for the .ini file.
+            List<string> readOnlyLocations = new List<string>();
+            
+            readOnlyLocations.Add(Environment.GetFolderPath(Environment.SpecialFolder.System));
+
+            string programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
+            string programFiles_x86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
+
+            if (!String.IsNullOrEmpty(programFiles_x86) && programFiles_x86 != programFiles) {
+                readOnlyLocations.Add(programFiles_x86);
+            }
+            readOnlyLocations.Add(programFiles);
+
+            // if the proposed iniFileLocation starts with any of the readonly locations then
+            // switch to using appdata instead.
+            bool isReadOnlyLocation = false;
+            foreach (string location in readOnlyLocations) {
+                string fullLocation = Path.GetFullPath(location).Trim();
+                if (proposed.StartsWith(fullLocation) && fullLocation.Length > 0) {
+                    isReadOnlyLocation = true;
+                    break;
+                }
+            }
+
+            string result;
+            if (isReadOnlyLocation) {
+                // use appdata location instead
+                string directory = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "ip4\\"
+                );
+                try {
+                    Directory.CreateDirectory(directory);
+                } catch {
+                    // Don't care - appropriate permissions error will be reported
+                    // when creation of .ini files.
+                }
+
+                result = Path.Combine(directory, Path.GetFileName(iniFileLocation));
+
+            } else {
+                result = iniFileLocation;
+            }
+            return result;
         }
 
         /// <summary>

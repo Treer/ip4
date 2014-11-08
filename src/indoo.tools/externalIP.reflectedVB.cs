@@ -333,6 +333,8 @@ namespace indoo.tools
 		{
 			Debugger.Break();
 		}
+
+        /* commented out to keep the .exe size down
 		private void setText_original()
 		{
 			this.txtP = "{p}";
@@ -526,6 +528,7 @@ namespace indoo.tools
 			this.txt_help += "less than minute. Command creates ini file with proper order of URLs. See ini {p}";
 			this.txt_help += "file contents for details and examples.{p}";
 		}
+        */
         /// <summary>
         /// Updates the copyright string (this.txt_copyr) to contain the assembly version number
         /// </summary>
@@ -1743,26 +1746,25 @@ namespace indoo.tools
 		{
 			this.writeToOrderOnly = true;
 			this.setUrlList(null, null);
-			string text = this.txt_info2;
-			text = this.changeP(text);
-			string text2 = "";
-			int arg_33_0 = 0;
-			checked
-			{
-				int num = this.urlOrder.Count - 1;
-				for (int i = arg_33_0; i <= num; i++)
-				{
-					if (i > 0)
-					{
-						text2 += "\r\n";
-					}
-					text2 = text2 + Conversions.ToString(i + 1) + ". ";
-					text2 = text2 + this.urlOrder[i].urlLineTrim + "\r\n";
-					text2 = text2 + Strings.StrDup(Strings.Len((i + 1).ToString()) + 2, " ") + this.urlOrder[i].regexLineTrim;
-				}
-				text = string.Format(text, text2);
-				this.consoleWriteLine(text);
-			}
+            if (this.urlOrder != null) {
+                string text = this.txt_info2;
+                text = this.changeP(text);
+                string text2 = "";
+                int arg_33_0 = 0;
+                checked {
+                    int num = this.urlOrder.Count - 1;
+                    for (int i = arg_33_0; i <= num; i++) {
+                        if (i > 0) {
+                            text2 += "\r\n";
+                        }
+                        text2 = text2 + Conversions.ToString(i + 1) + ". ";
+                        text2 = text2 + this.urlOrder[i].urlLineTrim + "\r\n";
+                        text2 = text2 + Strings.StrDup(Strings.Len((i + 1).ToString()) + 2, " ") + this.urlOrder[i].regexLineTrim;
+                    }
+                    text = string.Format(text, text2);
+                    this.consoleWriteLine(text);
+                }
+            }
 		}
 		private void showHelp()
 		{
@@ -1785,6 +1787,8 @@ namespace indoo.tools
 				this.myIniFile = Strings.Left(this.myIniFile, checked(Strings.Len(this.myIniFile) - 4));
 			}
 			this.myIniFile += ".ini";
+            myIniFile = RefineIniFileLocation(myIniFile);
+
 			this.missingParams = this.changeP(this.txt_errDesc);
 			if (Information.IsNothing(this.arguments))
 			{
