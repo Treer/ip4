@@ -5,8 +5,12 @@ A Windows command line utility which displays the IP address of each
 network adapter, as well as the external-IP address if the Internet is 
 accessible.
 
+ * [Executable](https://github.com/Treer/ip4/releases/latest)
+ * [Source code](https://github.com/Treer/ip4)
+
 USAGE:
-    ip4 [options]
+    
+        ip4 [options]
     
     Most useful options:
         
