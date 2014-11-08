@@ -134,7 +134,7 @@
             WriteLine(Verbosity.Default);
             WriteLine(Verbosity.Default, "External IP address: ");
 
-            if (_color) Console.ForegroundColor = ConsoleColor.Red;
+            if (_color) Console.ForegroundColor = ConsoleColor.DarkRed;
             WriteLine(Verbosity.Default, " No internet connection found.");
             if (_color) Console.ForegroundColor = _orginalColor;
         }
