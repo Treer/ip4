@@ -85,10 +85,50 @@ USAGE:
         -s:off                    Makes external-IP lookup the default 
                                   behaviour.
 
-
 For more details, see the content of the .ini file located with the ip4
 executable, or sometimes located in %appdata%\ip4\ if the executable's 
 directory isn't writable.
+
+
+OUTPUT:
+    By default, six columns of information are displayed for each IPv4
+    interface. Quiet (-q) and verbose (-v) options can adjust how much
+    of each column is shown.
+
+     * IP address
+     
+     * Mask 
+     
+     * Status - this consists of one of the following:
+         · Up        - The interface can transmit data packets. 
+                       (When the interface is ""Up"" the output text for the 
+                       interface is colored green)
+         · Down      - The interface cannot transmit data packets.
+         · Testing   - The interface is running tests.
+         · Unknown   - The network interface status is not known.
+         · Dormant   - The interface is not in a condition to transmit 
+                       data packets, it is waiting for an external event.
+         · Missing   - The network interface is unable to transmit data 
+                       packets because of a missing component, typically a
+                       hardware component.
+         · LayerDown - The network interface is unable to transmit data 
+                       packets because it runs on top of one or more other 
+                       interfaces, and at least one of these ""lower layer""
+                       interfaces is down.
+                     
+     * ""via DHCP"" - this column is used to indicate which interfaces have 
+         had their IP addresses assigned to them by a DHCP server. 
+         When an IP address is marked as ""via DHCP"", it means the interface
+         is configured to obtain its IP address using DHCP, and the current 
+         IP address is not a ""fallback"" IP address such as would be used 
+         when DHCP failed (aka Automatic Private IP Addresses). Note: There
+         may be edge cases where both of these conditions are satisfied while 
+         the current IP address did not come from a DHCP server.
+         
+     * Network adapter name
+     
+     * Network adapter description
+
 
 ip4 is free and open source. It uses routines from outerIP, a command-line
 utility by primoz@licen.net which which provides more functions for 

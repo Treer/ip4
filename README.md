@@ -1,8 +1,6 @@
 #ip4
 
-A Windows command line utility which displays the IP address of each 
-network adapter, as well as the external-IP address if the Internet is 
-accessible.
+A Windows command line utility to list the IP address of every network adapter, as well as the external IP address if the Internet is accessible.
 
  * [Executable](https://github.com/Treer/ip4/releases/latest)
  * [Source code](https://github.com/Treer/ip4)
@@ -11,7 +9,7 @@ accessible.
 
 Saves hunting through pages of noise from `ipconfig /all`
 
-###USAGE:
+###Usage:
     
         ip4 [options]
     
@@ -62,9 +60,25 @@ Saves hunting through pages of noise from `ipconfig /all`
 
 
 For more details, see the content of the .ini file located with the ip4
-executable, or sometimes located in %appdata%\ip4\ if the executable's 
+executable, or sometimes located in `%appdata%\ip4\` if the executable's 
 directory isn't writable.
 
-ip4 is free and open source. It uses routines from [outerIP](http://primocode.blogspot.com.au/2013/12/i-spent-couple-of-hours-searching-for.html), a command-line
-utility by primoz@licen.net which provides more functions for external IP 
-addresses, such as launching a script when the external IP address changes.
+###Output:
+By default, six columns of information are displayed for each IPv4 interface. Quiet (-q) and verbose (-v) options can adjust how much of each column is shown.
+
+* IP address
+* Mask 
+* Status - this consists of one of the following:
+ * Up - The interface can transmit data packets. (When the interface is "Up" the output text for the interface is colored green)
+ * Down      - The interface cannot transmit data packets.
+ * Testing   - The interface is running tests.
+ * Unknown   - The network interface status is not known.
+ * Dormant   - The interface is not in a condition to transmit data packets, it is waiting for an external event.
+ * Missing   - The network interface is unable to transmit data packets because of a missing component, typically a hardware component.
+ * LayerDown - The network interface is unable to transmit data packets because it runs on top of one or more other  interfaces, and at least one of these "lower layer" interfaces is down.
+ * "via DHCP" - this column is used to indicate which interfaces have had their IP addresses assigned to them by a DHCP server. When an IP address is marked as "via DHCP", it means the interface is configured to obtain its IP address using DHCP, and the current IP address is not a "fallback" IP address such as would be used when DHCP failed (aka Automatic Private IP Addresses). Note: There may be edge cases where both of these conditions are satisfied while the current IP address did not come from a DHCP server.     
+* Network adapter name
+* Network adapter description
+
+###Credits:
+ip4 is free and open source. It uses routines from [outerIP](http://primocode.blogspot.com.au/2013/12/i-spent-couple-of-hours-searching-for.html), a command-line utility by primoz@licen.net which provides more functions related to the external IP addresses, such as launching a script if the external IP address changes.
