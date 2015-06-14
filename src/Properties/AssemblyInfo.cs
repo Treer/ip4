@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © 2014 by Primoz Licen, Glenn Fisher")]
 [assembly: AssemblyDescription("Lists all the IPs")]
 [assembly: AssemblyFileVersion("1.0.0.1")]
-[assembly: AssemblyVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.0.2")]
 [assembly: AssemblyProduct("ip4")]
 [assembly: AssemblyTitle("ip4")]
 [assembly: AssemblyTrademark("")]
