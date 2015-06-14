@@ -71,8 +71,12 @@
 }
 
 namespace System.Runtime.CompilerServices {
-    // Hack to make extension methods work in .Net 2.0
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class ExtensionAttribute : Attribute {
-    }
+
+    #if Framework4
+    #else
+        // Hack to make extension methods work in .Net 2.0
+        [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+        public class ExtensionAttribute : Attribute {
+        }
+    #endif
 }
