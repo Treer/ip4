@@ -551,9 +551,9 @@ namespace indoo.tools
         /// </summary>
 		private void setTextVars()
 		{
-			string text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			text = Strings.Left(text, Strings.InStrRev(text, ".", -1, CompareMethod.Binary));
-			this.txt_copyr = Strings.Replace(this.txt_copyr, "{0}", text, 1, -1, CompareMethod.Binary);
+            Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            string programVersion = assemblyVersion.Major + "." + assemblyVersion.Minor + "." + assemblyVersion.Revision;
+            this.txt_copyr = Strings.Replace(this.txt_copyr, "{0}", programVersion, 1, -1, CompareMethod.Binary);
 		}
 		public void setArguments(string[] args)
 		{
