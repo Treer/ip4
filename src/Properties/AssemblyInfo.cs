@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 [assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default | DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright © 2014 by Primoz Licen, Glenn Fisher")]
+[assembly: AssemblyCopyright("Copyright © 2015 by Primoz Licen, Glenn Fisher")]
 [assembly: AssemblyDescription("Lists all the IPs")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyFileVersion("1.0.0.3")]
 [assembly: AssemblyVersion("1.0.0.2")]
 [assembly: AssemblyProduct("ip4")]
 [assembly: AssemblyTitle("ip4")]

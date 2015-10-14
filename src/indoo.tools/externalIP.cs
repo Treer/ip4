@@ -38,6 +38,7 @@ namespace indoo.tools
             this.txt_ipBracket = " ({0})";
             this.txt_result = "Computer's external IP: {0}";
             this.txt_dlFail = "Download failed: {0}";
+            this.txt_scrapeFail = "Scraping of download failed: {0}";
             this.txt_regexFail = "Malformed regex: {0}";
             this.txt_resultVerbose = "External IP={0}, time={1}ms, url={2}";
             this.txt_timeoutVerbose = "Timeout, time>{0}ms, url={1}";
@@ -144,18 +145,21 @@ namespace indoo.tools
             // \<div\ class\="[^"]*"\>(?<content>.*)\<\/div\>\<div\ class\="[^"]*"\>Your\ public\ IP\ address\<\/div\>
             //this.txt_ini += "http://api.externalip.net/ip{p}";
             //this.txt_ini += "(?<content>.*){p}";
-            this.txt_ini += "http://www.whatsmyip.us/{p}";
-            this.txt_ini += "copyClip\\(\\)\"\\>\\s(?<content>.*?)\\<\\/textarea\\>{p}";
+            this.txt_ini += "http://api.ipify.org/{p}";
+            this.txt_ini += "(?<content>.*){p}";
+            this.txt_ini += "http://ipv4bot.whatismyipaddress.com/{p}";
+            this.txt_ini += "(?<content>.*){p}";
             this.txt_ini += "http://2ip.ru/{p}";
             this.txt_ini += "\\<big\\ id=\"d_clip_button\"\\>(?<content>.*?)\\<\\/big\\>{p}";
             this.txt_ini += "http://whatsmyip.net/{p}";
             this.txt_ini += "\\<input\\ type\\=\"text\"\\ value\\=\"(?<content>.*?)\"\\ \\/\\>\\<\\/h1\\>{p}";
-            this.txt_ini += "http://whatismyipaddress.com/{p}";
-            this.txt_ini += "\\<a\\ href\\=\"\\/ip\\/(?<content>.*?)\"\\>\\<img\\ src\\=\"{p}";
             this.txt_ini += "http://icanhazip.com/{p}";
             this.txt_ini += "(?<content>.*){p}";
-            this.txt_ini += "http://www.myip.ru/{p}";
-            this.txt_ini += "\\<TD\\ bgcolor\\=white\\ align\\=center\\ valign\\=middle\\>(?<content>.*?)\\<\\/TD\\>{p}";
+            this.txt_ini += "http://myip.ru/{p}";
+            this.txt_ini += "\\n\\t\\<tr\\>\\<td\\>(?<content>.*?)\\<\\/td\\>\\<\\/tr\\>{p}"; // not a good way to match, very brittle!
+            //this.txt_ini += "\\<TD\\ bgcolor\\=white\\ align\\=center\\ valign\\=middle\\>(?<content>.*?)\\<\\/TD\\>{p}"; // original scrape string for myip.ru
+            this.txt_ini += "http://www.whatsmyip.us/{p}";
+            this.txt_ini += "copyClip\\(\\)\"\\>\\s(?<content>.*?)\\<\\/textarea\\>{p}";
         
 
             // The help strings should not be used, as ip4 provides its own

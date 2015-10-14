@@ -29,6 +29,17 @@ namespace indoo.tools
     /// </summary>
     public partial class externalIP
 	{
+
+#if DEBUG
+        internal const string cUserAgent = "debug/testing of ip4 Windows command (http://bitbucket.org/Tr33r/ip4)";
+#else
+        /// <summary>
+        /// Some sites (such as whatismyipaddress.com/api) request a user agent 
+        /// that could allow to the project to be contacted if neccessary.
+        /// </summary>
+        internal const string cUserAgent = "ip4 Windows command (http://bitbucket.org/Tr33r/ip4)";
+#endif
+
         private List<string> urls;
         /// <summary>
         /// Cached IP address for the urls in the this.urls list
@@ -111,6 +122,7 @@ namespace indoo.tools
         public string txt_invalid1;
         public string txt_ipBracket;
         public string txt_dlFail;
+        public string txt_scrapeFail;
         public string txt_regexFail;
         public string txt_err1;
         public string txt_err2;
@@ -191,9 +203,11 @@ namespace indoo.tools
 							myWebClient.Headers.Add("Cache-Control", "post-check=0, pre-check=0");
 							myWebClient.Headers.Add("Pragma", "no-cache");
 							myWebClient.Headers.Add("lastCached", DateTime.Now.AddDays(-1.0).ToString());
+                            myWebClient.Headers.Add("user-agent", cUserAgent);
 						}
 						catch (Exception expr_D8)
 						{
+                            //Debug.WriteLine("Exception adding headers: " + expr_D8);
 							ProjectData.SetProjectError(expr_D8);
 							ProjectData.ClearProjectError();
 						}
@@ -207,7 +221,9 @@ namespace indoo.tools
 				}
 				catch (Exception expr_124)
 				{
-					ProjectData.SetProjectError(expr_124);
+                    //string message = "Exception downloading data: " + expr_124 + "\r\n\r\ninner exception: " + expr_124.InnerException;
+                    //Debug.WriteLine(message);
+                    ProjectData.SetProjectError(expr_124);
 					text = "";
 					ProjectData.ClearProjectError();
 				}
@@ -237,6 +253,7 @@ namespace indoo.tools
 					httpWebRequest.KeepAlive = false;
 					httpWebRequest.Method = "POST";
 					httpWebRequest.Headers.Add("lastCached", DateTime.Now.ToString());
+                    httpWebRequest.UserAgent = cUserAgent;
 					if (!this.isCachePreventAborted)
 					{
 						try
@@ -1595,7 +1612,12 @@ namespace indoo.tools
                             this.consoleWriteLine(errorMessage);
                         } else {
 							this.consoleWriteLine("");
-							this.consoleWriteLine(string.Format(this.txt_dlFail, value.urlLineTrim));
+                            if (input2.Length > 7) {
+                                // We managed to download enough text to contain an ip address.
+                                this.consoleWriteLine(string.Format(this.txt_scrapeFail, value.urlLineTrim));
+                            } else {
+                                this.consoleWriteLine(string.Format(this.txt_dlFail, value.urlLineTrim));
+                            }
 						}
 						retry++;
 					}
