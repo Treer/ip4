@@ -1,4 +1,4 @@
-#ip4
+# ip4
 
 A Windows command line utility to list the IP address of every network adapter, as well as the external IP address if the Internet is accessible.
 
@@ -9,7 +9,7 @@ A Windows command line utility to list the IP address of every network adapter, 
 
 Saves hunting through pages of noise from `ipconfig /all`
 
-###Usage:
+### Usage:
     
         ip4 [options]
     
@@ -63,7 +63,7 @@ For more details, see the content of the .ini file located with the ip4
 executable, or sometimes located in `%appdata%\ip4\` if the executable's 
 directory isn't writable.
 
-###Output:
+### Output:
 By default, six columns of information are displayed for each IPv4 interface. Quiet (-q) and verbose (-v) options can adjust how much of each column is shown.
 
 * IP address
@@ -80,5 +80,5 @@ By default, six columns of information are displayed for each IPv4 interface. Qu
 * Network adapter name
 * Network adapter description
 
-###Credits:
+### Credits:
 ip4 is free and open source. It uses routines from [outerIP](http://primocode.blogspot.com.au/2013/12/i-spent-couple-of-hours-searching-for.html), a command-line utility by primoz@licen.net which provides more functions related to the external IP addresses, such as launching a script if the external IP address changes.
