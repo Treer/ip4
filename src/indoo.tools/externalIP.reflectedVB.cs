@@ -31,13 +31,13 @@ namespace indoo.tools
 	{
 
 #if DEBUG
-        internal const string cUserAgent = "debug/testing of ip4 Windows command (http://bitbucket.org/Tr33r/ip4)";
+        internal const string cUserAgent = "debug/testing of ip4 Windows command (https://github.com/Treer/ip4)";
 #else
         /// <summary>
         /// Some sites (such as whatismyipaddress.com/api) request a user agent 
         /// that could allow to the project to be contacted if neccessary.
         /// </summary>
-        internal const string cUserAgent = "ip4 Windows command (http://bitbucket.org/Tr33r/ip4)";
+        internal const string cUserAgent = "ip4 Windows command (https://github.com/Treer/ip4)";
 #endif
 
         private List<string> urls;
