@@ -2,7 +2,8 @@
 
 A Windows command line utility to list the IP address of every network adapter, as well as the external IP address if the Internet is accessible.
 
- * [Executable](https://github.com/Treer/ip4/releases/latest)
+ * Install with Chocolatey: `choco install ip4`
+ * Or download [the executable](https://github.com/Treer/ip4/releases/latest)
  * [Source code](https://github.com/Treer/ip4)
 
 <img src="https://treer.github.io/images/ip4screenshot.png" width="677" height="343" />
