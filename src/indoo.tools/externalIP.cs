@@ -141,42 +141,19 @@ namespace indoo.tools
 
             this.txt_ini += "skipExternalIPLookup = false{p}";
 
-            // http://www.google.com/search?q=what+is+my+ip
-            // \<div\ class\="[^"]*"\>(?<content>.*)\<\/div\>\<div\ class\="[^"]*"\>Your\ public\ IP\ address\<\/div\>
-            //this.txt_ini += "http://api.externalip.net/ip{p}";
-            //this.txt_ini += "(?<content>.*){p}";
+            // Removed all external IP providers except for AWS and Azure, in the hope
+            // of having fewer false positives from bad anti-malware software
 
             this.txt_ini += "http://checkip.amazonaws.com/{p}";
             this.txt_ini += "(?<content>.*){p}";
 
-            this.txt_ini += "https://wtfismyip.com/text{p}";
+            this.txt_ini += "http://checkip.azurewebsites.net/{p}";
+            this.txt_ini += "(?i)Address:\\s*(?<content>[^ <]+){p}";
+
+            /* for testing timeouts
+            this.txt_ini += "http://httpstat.us/200?sleep=50000{p}";
             this.txt_ini += "(?<content>.*){p}";
-
-            this.txt_ini += "http://api.ipify.org/{p}";
-            this.txt_ini += "(?<content>.*){p}";
-
-            this.txt_ini += "http://ipv4bot.whatismyipaddress.com/{p}";
-            this.txt_ini += "(?<content>.*){p}";
-
-            this.txt_ini += "http://2ip.ru/{p}";
-            this.txt_ini += "\\<big\\ id=\"d_clip_button\"\\>(?<content>.*?)\\<\\/big\\>{p}";
-
-            this.txt_ini += "http://whatsmyip.net/{p}";
-            this.txt_ini += "\\nvalue=\"(?<content>.*?)\"\\n{p}";
-            //this.txt_ini += "\\<input\\ type\\=\"text\"\\ value\\=\"(?<content>.*?)\"\\ \\/\\>\\<\\/h1\\>{p}"; // original scrape string for whatsmyip.net
-
-            this.txt_ini += "http://icanhazip.com/{p}";
-            this.txt_ini += "(?<content>.*){p}";
-
-            this.txt_ini += "http://myip.ru/index_small.php{p}";
-            this.txt_ini += "\\n\\t\\<tr\\>\\<td\\>(?<content>.*?)\\<\\/td\\>\\<\\/tr\\>{p}"; // not a good way to match, very brittle!
-            //this.txt_ini += "\\<TD\\ bgcolor\\=white\\ align\\=center\\ valign\\=middle\\>(?<content>.*?)\\<\\/TD\\>{p}"; // original scrape string for myip.ru
-
-            /* Defunct?
-            this.txt_ini += "http://www.whatsmyip.us/{p}";
-            this.txt_ini += "copyClip\\(\\)\"\\>\\s(?<content>.*?)\\<\\/textarea\\>{p}";
-             */ 
-        
+            */
 
             // The help strings should not be used, as ip4 provides its own
             this.txt_help = "Help error: J8";

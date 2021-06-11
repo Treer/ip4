@@ -34,7 +34,7 @@ namespace indoo.tools
         internal const string cUserAgent = "debug/testing of ip4 Windows command (https://github.com/Treer/ip4)";
 #else
         /// <summary>
-        /// Some sites (such as whatismyipaddress.com/api) request a user agent 
+        /// Some sites (such as whatismyipaddress) request a user agent 
         /// that could allow to the project to be contacted if neccessary.
         /// </summary>
         internal const string cUserAgent = "ip4 Windows command (https://github.com/Treer/ip4)";
@@ -306,12 +306,11 @@ namespace indoo.tools
 			}
 			public myWebClient()
 			{
-				this._TimeoutMS = 0;
+				_TimeoutMS = 0;
 			}
 			public myWebClient(int TimeoutMS)
 			{
-				this._TimeoutMS = 0;
-				this._TimeoutMS = TimeoutMS;
+				_TimeoutMS = TimeoutMS;
 			}
 			private static void TimeoutCallback(object state, bool timedOut)
 			{
@@ -2109,15 +2108,16 @@ namespace indoo.tools
 				this.timeStart = DateTime.Now;
 
 				externalIP.getPage2Thread getPage2Thread = null;
-				Thread thread;
 				externalIP.getPage3Thread getPage3Thread = null;
+
+				Thread thread;
 				if (!this.isPOSTMethod)
 				{
 					getPage2Thread = new externalIP.getPage2Thread();
 					getPage2Thread.isCachePreventAborted = this.isCachePreventAborted;
 					getPage2Thread.timeOut = this.timeOut;
 					getPage2Thread.url = url;
-					getPage2Thread.urlUniqueAdd = this.urlUniqueAdd();
+					getPage2Thread.urlUniqueAdd = this.urlUniqueAdd(url);
 					externalIP.getPage2Thread VBXt_refXS6 = getPage2Thread;
 					thread = new Thread((ThreadStart)delegate
 					{
@@ -2130,9 +2130,9 @@ namespace indoo.tools
 					getPage3Thread.isCachePreventAborted = this.isCachePreventAborted;
 					getPage3Thread.timeOut = this.timeOut;
 					getPage3Thread.url = url;
-					getPage3Thread.urlUniqueAdd = this.urlUniqueAdd();
+					getPage3Thread.urlUniqueAdd = this.urlUniqueAdd(url);
 					externalIP.getPage3Thread VBXt_refXS7 = getPage3Thread;
-                    thread = new Thread((ThreadStart)delegate
+					thread = new Thread((ThreadStart)delegate
 					{
 						VBXt_refXS7.getPage();
 					});
@@ -2144,7 +2144,7 @@ namespace indoo.tools
 				do
 				{
 					Thread.Sleep(10);
-					num = DateTime.Now.Subtract(this.timeStart).TotalSeconds * 1000.0;
+					num = DateTime.Now.Subtract(this.timeStart).TotalMilliseconds;
 				}
 				while (!(num > (double)this.timeOut | !thread.IsAlive));
 				string text;
@@ -2263,13 +2263,16 @@ namespace indoo.tools
 				return result;
 			}
 		}
-		private string urlUniqueAdd()
+		private string urlUniqueAdd(string url)
 		{
 			if (this.isCachePreventAborted)
 			{
 				return "";
 			}
-			return DateAndTime.Now.ToString("?yyMMddHHmmssfffffff");
+
+			return url.Contains("?")
+				? DateAndTime.Now.ToString("&yyMMddHHmmssfffffff")
+				: DateAndTime.Now.ToString("?yyMMddHHmmssfffffff");
 		}
 
         public externalIP() {
